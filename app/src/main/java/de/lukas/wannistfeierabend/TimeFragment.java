@@ -21,11 +21,15 @@ public class TimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_time, container, false);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         // custom actions
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        progressBar.setProgress(10
-        );
-
-        return view;
+        progressBar.setProgress(10);
     }
 }

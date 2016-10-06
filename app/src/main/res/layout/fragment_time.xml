@@ -30,7 +30,7 @@
         android:id="@+id/progress_bar"
         android:layout_marginTop="100dp"
         android:max="100"
-        android:progress="40"
-        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"/>
+        style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+        android:progressDrawable="@drawable/progress_circle"/>
 
 </RelativeLayout>
