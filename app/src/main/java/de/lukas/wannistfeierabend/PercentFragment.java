@@ -24,4 +24,5 @@ public class PercentFragment extends Fragment {
 
         return view;
     }
+
 }

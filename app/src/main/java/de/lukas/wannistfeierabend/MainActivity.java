@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private PercentFragment percentFragment;
+    private TimeFragment timeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,10 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        percentFragment = new PercentFragment();
+        timeFragment = new TimeFragment();
     }
+
 
 
     @Override
@@ -95,13 +100,13 @@ public class MainActivity extends AppCompatActivity {
 
             switch (position) {
                 case 0:
-                    fragment = new PercentFragment();
+                    fragment = percentFragment;
                     break;
                 case 1:
-                    fragment = new TimeFragment();
+                    fragment = timeFragment;
                     break;
                 default:
-                   fragment =  new PercentFragment();
+                    fragment =  percentFragment;
 
             }
             return fragment;
