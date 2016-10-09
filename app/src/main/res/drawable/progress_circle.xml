@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-<rotate  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fromDegrees="120"
-    android:toDegrees="120">
-    <shape
-        android:innerRadiusRatio="2.5"
-        android:shape="ring"
-        android:thickness="10dp"
-        android:useLevel="true"><!-- this line fixes the issue for lollipop api 21 -->
+    <item android:id="@android:id/background">
+        <shape
+            android:innerRadiusRatio="2.5"
+            android:shape="ring"
+            android:useLevel="false"
+            android:thickness="10dp">
+            <solid android:color="@color/progress_arc_background"/>
+        </shape>
+    </item>
+    <item>
+    <rotate
+        android:fromDegrees="120"
+        android:toDegrees="120">
+        <shape
+            android:innerRadiusRatio="2.5"
+            android:shape="ring"
+            android:thickness="10dp"
+            android:useLevel="true">
+            <solid
+                android:color="@color/colorAccent"
+                />
+        </shape>
+    </rotate>
+    </item>
 
-        <solid
-            android:color="@color/progress_arc_color"
-            />
-    </shape>
-</rotate>
+</layer-list>
