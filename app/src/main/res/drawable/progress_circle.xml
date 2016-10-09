@@ -12,8 +12,8 @@
     </item>
     <item>
     <rotate
-        android:fromDegrees="120"
-        android:toDegrees="120">
+        android:fromDegrees="90"
+        android:toDegrees="90">
         <shape
             android:innerRadiusRatio="2.5"
             android:shape="ring"
