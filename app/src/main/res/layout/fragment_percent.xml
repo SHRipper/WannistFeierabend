@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,54 +8,51 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="de.lukas.wannistfeierabend.PercentFragment">
+    tools:context="de.lukas.wannistfeierabend.fragments.PercentFragment">
 
     <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@android:style/Widget.Holo.ProgressBar.Horizontal"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:id="@+id/progress_bar"
-        android:max="100"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        style="@android:style/Widget.Holo.ProgressBar.Horizontal"
-        android:progressDrawable="@drawable/progress_circle"/>
+        android:max="100"
+        android:progressDrawable="@drawable/progress_circle" />
 
     <TextView
+        android:id="@+id/text_process_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text_process_state"
-        android:background="#00000000"
-        android:textSize="15pt"
-        android:textColor="@color/primary_text_color"
         android:layout_alignBottom="@id/progress_bar"
         android:layout_alignLeft="@id/progress_bar"
-        android:layout_alignTop="@id/progress_bar"
         android:layout_alignRight="@id/progress_bar"
-        android:textAlignment="center"
+        android:layout_alignTop="@id/progress_bar"
+        android:background="#00000000"
         android:gravity="center"
-        />
+        android:textAlignment="center"
+        android:textColor="@color/primary_text_color"
+        android:textSize="15pt" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/icon_share"
-        app:fabSize="normal"
-        app:backgroundTint="@color/colorAccent"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/progress_bar"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        />
+        app:backgroundTint="@color/colorAccent"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_sync_black_24dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="I"
-        android:textSize="35dp"
         android:layout_alignBaseline="@id/progress_bar"
-        android:layout_centerHorizontal="true"
         android:layout_alignBottom="@id/progress_bar"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="3dp"
-        />
+        android:text="I"
+        android:textSize="35dp" />
 
 </RelativeLayout>

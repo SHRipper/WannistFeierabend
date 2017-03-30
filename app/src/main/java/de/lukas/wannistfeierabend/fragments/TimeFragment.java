@@ -1,4 +1,4 @@
-package de.lukas.wannistfeierabend;
+package de.lukas.wannistfeierabend.fragments;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -13,13 +13,13 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import de.lukas.wannistfeierabend.R;
+
 /**
  * Created by Lukas on 05.10.2016.
  */
 
 public class TimeFragment extends Fragment {
-
-
 
     @Nullable
     @Override

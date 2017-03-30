@@ -5,5 +5,6 @@
     <color name="colorPrimaryDark">#616161</color>
     <color name="colorAccent">#FF5722</color>
     <color name="primary_text_color">#212121</color>
+    <color name="textColorPrimary">#ffffff</color>
     <color name="progress_arc_background">#E0E0E0</color>
 </resources>

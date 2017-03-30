@@ -1,9 +1,10 @@
-package de.lukas.wannistfeierabend;
+package de.lukas.wannistfeierabend.fragments;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,17 +21,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import de.lukas.wannistfeierabend.R;
+
 /**
  * Created by Lukas on 05.10.2016.
  */
 
-public class PercentFragment extends Fragment {
+public class PercentFragment extends Fragment implements FloatingActionButton.OnClickListener{
 
     ProgressBar progressBar;
     TextView textProgress;
+    FloatingActionButton fab;
 
     int animatorDuration;
     int progressBarMax;
+
+    ObjectAnimator objectAnimator;
 
     long startTime;
     long endTime;
@@ -47,18 +53,22 @@ public class PercentFragment extends Fragment {
         progressBarMax = progressBar.getMax() +1;
         animatorDuration = getContext().getResources().getInteger(R.integer.animator_duration);
 
+        fab = (FloatingActionButton) view.findViewById(R.id.fab_refresh);
+        fab.setOnClickListener(this);
+
         startProgressAnim();
 
         return view;
     }
 
     private void startProgressAnim(){
-        ObjectAnimator animation = ObjectAnimator.ofInt (progressBar, "progress", 0, getPercentDone()+1);
-        animation.setDuration (animatorDuration);
-        animation.setInterpolator (new DecelerateInterpolator());
-        animation.start ();
+        Log.d("PercentFragment","startProgressAnim called");
+        objectAnimator = ObjectAnimator.ofInt (progressBar, "progress", 0, getPercentDone()+1);
+        objectAnimator.setDuration (animatorDuration);
+        objectAnimator.setInterpolator (new DecelerateInterpolator());
+        objectAnimator.start ();
 
-        animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int currentValue = progressBar.getProgress();
@@ -72,21 +82,22 @@ public class PercentFragment extends Fragment {
     }
 
     private int getPercentDone(){
-        Calendar calendar = Calendar.getInstance();
-
-        long currentTime = calendar.getTimeInMillis();
-
-        calendar.set(2016,Calendar.OCTOBER,9,10,0,0);
-        long startTime = calendar.getTimeInMillis();
-
-        calendar.set(2016,Calendar.OCTOBER,9,20,0,0);
-        long endTime = calendar.getTimeInMillis();
-
-        long entirePeriod = (endTime - startTime) / 1000;
-        long timeDone = (currentTime - startTime) / 1000;
-
-        int percentDone = (int) Math.ceil((timeDone*100) / entirePeriod);
-        return percentDone;
+        return 88;
+//        Calendar calendar = Calendar.getInstance();
+//
+//        long currentTime = calendar.getTimeInMillis();
+//
+//        calendar.set(2016,Calendar.OCTOBER,9,10,0,0);
+//        long startTime = calendar.getTimeInMillis();
+//
+//        calendar.set(2016,Calendar.OCTOBER,9,20,0,0);
+//        long endTime = calendar.getTimeInMillis();
+//
+//        long entirePeriod = (endTime - startTime) / 1000;
+//        long timeDone = (currentTime - startTime) / 1000;
+//
+//        int percentDone = (int) Math.ceil((timeDone*100) / entirePeriod);
+//        return percentDone;
     }
 
     @Override
@@ -94,8 +105,7 @@ public class PercentFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
 
         if (isVisibleToUser){
-            Log.d("TimeFragment", "TimeFragement was selected");
-
+            Log.d("PercentFragment", "PercentFragment was selected");
             startProgressAnim();
         }
         else {
@@ -103,7 +113,7 @@ public class PercentFragment extends Fragment {
                 progressBar.setProgress(0);
                 textProgress.setText("0%");
             }catch (NullPointerException e){
-                Log.d("TimeFragment","NullPointerException raised during View modification");
+                Log.d("PercentFragment","NullPointerException raised during View modification");
             }
 
         }
@@ -119,12 +129,27 @@ public class PercentFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        resetProgress();
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        Log.d("PercentFragment","Reset FAB clicked.");
+        // FAB onClick to refresh the animation process
+        if (!objectAnimator.isRunning()){
+            resetProgress();
+            startProgressAnim();
+        }
+    }
+
+    private void resetProgress(){
+        Log.d("PercentFragment","reset Progress called.");
         try{
             progressBar.setProgress(0);
             textProgress.setText("0%");
         }catch (NullPointerException e){
-            Log.d("TimeFragment","NullPointerException raised during View modification");
+            Log.d("PercentFragment","NullPointerException raised during View modification");
         }
-
     }
 }
