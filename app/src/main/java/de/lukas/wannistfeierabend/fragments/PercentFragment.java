@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,29 +51,31 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         textProgress = (TextView) view.findViewById(R.id.text_process_state);
 
-        progressBarMax = progressBar.getMax() +1;
+        progressBarMax = progressBar.getMax();
+        Log.d("PercentFragment","Progressbar max: " + progressBarMax);
         animatorDuration = getContext().getResources().getInteger(R.integer.animator_duration);
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab_refresh);
         fab.setOnClickListener(this);
 
         startProgressAnim();
+        resetProgress();
 
         return view;
     }
 
     private void startProgressAnim(){
         Log.d("PercentFragment","startProgressAnim called");
-        objectAnimator = ObjectAnimator.ofInt (progressBar, "progress", 0, getPercentDone()+1);
+
+        objectAnimator = ObjectAnimator.ofInt (progressBar, "progress" , 0, getPercentDone());
         objectAnimator.setDuration (animatorDuration);
-        objectAnimator.setInterpolator (new DecelerateInterpolator());
+        objectAnimator.setInterpolator (new FastOutSlowInInterpolator());
         objectAnimator.start ();
 
         objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                int currentValue = progressBar.getProgress();
-
+                int currentValue =(int) objectAnimator.getAnimatedValue();
                 textProgress.setText(currentValue +"%");
                 if (currentValue == 100){
                     textProgress.setText(textProgress.getText()+ "\nGeschafft!");
@@ -82,7 +85,7 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     }
 
     private int getPercentDone(){
-        return 88;
+        return 30;
 //        Calendar calendar = Calendar.getInstance();
 //
 //        long currentTime = calendar.getTimeInMillis();

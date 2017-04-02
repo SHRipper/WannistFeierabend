@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="test">
-        <CheckBoxPreference android:title="hallo" />
+    <PreferenceCategory android:title="Benachrichtigungen">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="key_enable_notifications"
+            android:title="Benachrichtigungen"/>
+
+        <de.lukas.wannistfeierabend.TimePreference
+            android:key="key_notifications_time"
+            android:title="Benachrichtigungszeit"
+            android:dependency="key_enable_notifications" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Stundenplan">
+        <PreferenceScreen android:title="Stundenplan erstellen"></PreferenceScreen>
+    </PreferenceCategory>
 </PreferenceScreen>
