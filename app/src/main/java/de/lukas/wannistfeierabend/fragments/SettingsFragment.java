@@ -19,7 +19,7 @@ public class SettingsFragment extends PreferenceFragment
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object o) {
-        if (preference.getKey().equals("key_notification_time"))
+       // if (preference.getKey().equals("key_notification_time"))
         return false;
     }
 }
