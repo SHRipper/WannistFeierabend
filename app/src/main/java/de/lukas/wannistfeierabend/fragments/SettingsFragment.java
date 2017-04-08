@@ -1,25 +1,50 @@
 package de.lukas.wannistfeierabend.fragments;
 
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import de.lukas.wannistfeierabend.R;
 
-public class SettingsFragment extends PreferenceFragment
-        implements Preference.OnPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
+
+    Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preference_general);
+
+        Preference notificationPreference = findPreference("key_notifications_time");
+        Preference schedulePreference = findPreference("key_schedule");
+        notificationPreference.setOnPreferenceClickListener(this);
+        schedulePreference.setOnPreferenceClickListener(this);
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object o) {
-       // if (preference.getKey().equals("key_notification_time"))
-        return false;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if (preference.getKey().equals("key_notifications_time")){
+            Log.d("SettingsFragment", "i dont know yet was clicked");
+
+        }
+        if (preference.getKey().equals("key_schedule")){
+            Log.d("SettingsFragment", "create schedule was clicked.");
+            getFragmentManager().beginTransaction()
+                    .addToBackStack("main_settings")
+                    .replace(R.id.settings_fragment, new ScheduleFragment())
+                    .commit();
+        }
+        return true;
     }
 }

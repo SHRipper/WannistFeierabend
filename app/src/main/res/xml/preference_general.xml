@@ -6,13 +6,13 @@
             android:key="key_enable_notifications"
             android:title="Benachrichtigungen"/>
 
-        <de.lukas.wannistfeierabend.TimePreference
+        <Preference
             android:key="key_notifications_time"
             android:title="Benachrichtigungszeit"
             android:dependency="key_enable_notifications" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Stundenplan">
-        <PreferenceScreen android:title="Stundenplan erstellen"></PreferenceScreen>
+        <Preference android:title="Stundenplan erstellen" android:key="key_schedule"></Preference>
     </PreferenceCategory>
 </PreferenceScreen>
