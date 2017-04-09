@@ -2,12 +2,16 @@ package de.lukas.wannistfeierabend.fragments;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +46,8 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     long startTime;
     long endTime;
 
+    SharedPreferences sharedPreferences;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,10 +64,17 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
         fab = (FloatingActionButton) view.findViewById(R.id.fab_refresh);
         fab.setOnClickListener(this);
 
+        return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
         startProgressAnim();
         resetProgress();
 
-        return view;
     }
 
     private void startProgressAnim(){
@@ -85,29 +98,59 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     }
 
     private int getPercentDone(){
-        return 80 *10;
-//        Calendar calendar = Calendar.getInstance();
-//
-//        long currentTime = calendar.getTimeInMillis();
-//
-//        calendar.set(2016,Calendar.OCTOBER,9,10,0,0);
-//        long startTime = calendar.getTimeInMillis();
-//
-//        calendar.set(2016,Calendar.OCTOBER,9,20,0,0);
-//        long endTime = calendar.getTimeInMillis();
-//
-//        long entirePeriod = (endTime - startTime) / 1000;
-//        long timeDone = (currentTime - startTime) / 1000;
-//
-//        int percentDone = (int) Math.ceil((timeDone*100) / entirePeriod);
-//        return percentDone;
+
+        String weekday = getWeekdayKey();
+        if (weekday.equals("none")){
+            return 0;
+        }
+        String time = sharedPreferences.getString(weekday, "0:00 - 21:00");
+        Log.d("Pref time", time);
+        int times[] = getTimesInMinutes(weekday);
+        int endTime = times[1];
+        int startTime = times[0];
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(System.currentTimeMillis());
+        c.setTimeZone(TimeZone.getDefault());
+        int currentTime = (c.get(Calendar.MINUTE) + c.get(Calendar.HOUR_OF_DAY)* 60) - startTime;
+        int timePeriod = (endTime - startTime);
+        int percentageDone = (int) Math.round((currentTime / (double)timePeriod) * 100);
+        Log.d("Time","" + timePeriod);
+        Log.d("Time","" + currentTime);
+        Log.d("Time","" +  percentageDone);
+
+        if (percentageDone > 100){
+            return 100 * 10;
+        }
+        return percentageDone * 10;
+    }
+    private int[] getTimesInMinutes(String key){
+        int times[] = new int[2];
+        String time[] = sharedPreferences.getString(key,"8:00 - 13:00").split(" - ");
+
+        String startTime = time[0];
+        String endTime = time[1];
+
+        times[0] = Integer.parseInt(startTime.split(":")[0])* 60 + Integer.parseInt(startTime.split(":")[1]);
+        times[1] = Integer.parseInt(endTime.split(":")[0])*60+Integer.parseInt(endTime.split(":")[1]);
+        return times;
+    }
+    private String getWeekdayKey(){
+        Calendar c = Calendar.getInstance();
+        c.setFirstDayOfWeek(Calendar.MONDAY);
+        Log.d("","Day index" + c.DAY_OF_WEEK);
+        String weekdays[] = {"key_time_monday", "key_time_tuesday",
+        "key_time_wednesday", "key_time_thursday", "key_time_friday"};
+        if (c.DAY_OF_WEEK > 5){
+            return "key_time_tuesday";
+        }
+        return weekdays[c.DAY_OF_WEEK-1];
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        if (isVisibleToUser){
+        if (isVisibleToUser && sharedPreferences != null){
             Log.d("PercentFragment", "PercentFragment was selected");
             startProgressAnim();
         }
@@ -125,7 +168,6 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     @Override
     public void onResume() {
         super.onResume();
-
         startProgressAnim();
     }
 

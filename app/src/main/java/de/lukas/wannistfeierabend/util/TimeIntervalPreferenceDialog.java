@@ -91,13 +91,14 @@ public class TimeIntervalPreferenceDialog {
      */
     private int[] getInitTimes(){
         int times[] = new int[4];
-        String time[] = sharedPreferences.getString(preference.getKey(),"default").split(" - ");
+        String time[] = sharedPreferences.getString(preference.getKey(),"8:00 - 13:00").split(" - ");
+        Log.d("",""+ time[0]);
         String startTime = time[0];
         String endTime = time[1];
         times[0] = Integer.parseInt(startTime.split(":")[0]);
         times[1] = Integer.parseInt(startTime.split(":")[1]);
 
-        times[2] = Integer.parseInt(endTime.split(":")[1]);
+        times[2] = Integer.parseInt(endTime.split(":")[0]);
         times[3] = Integer.parseInt(endTime.split(":")[1]);
         return times;
     }
