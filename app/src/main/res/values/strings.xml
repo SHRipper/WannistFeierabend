@@ -1,10 +1,16 @@
 <resources>
+    <!-- Application names -->
     <string name="app_name">Wann ist Feierabend?</string>
     <string name="action_settings">Einstellungen</string>
     <string name="title_activity_settings">Einstellungen</string>
-
-    <!-- -->
     <string name="notification_settings_header">Benachrichtigungen</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Schedule default values -->
+    <string name="default_time">8:00 - 13:00</string>
+
+
+    <!-- Error messages -->
+    <string name="error_de_end_before_start">Die Änderung wurde nicht übernommen,
+        da die Endzeit vor der Startzeit liegt</string>
 </resources>

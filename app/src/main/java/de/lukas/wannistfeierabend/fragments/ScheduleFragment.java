@@ -9,14 +9,9 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import de.lukas.wannistfeierabend.R;
-import de.lukas.wannistfeierabend.TimeIntervalPreference;
+import de.lukas.wannistfeierabend.util.TimeIntervalPreferenceDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +20,13 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
 
     SharedPreferences sharedPreferences;
     Context context;
+
+    Preference prefMonday;
+    Preference prefTuesday;
+    Preference prefWednesday;
+    Preference prefThursday;
+    Preference prefFriday;
+
 
     @Override
     public void onAttach(Context context) {
@@ -37,21 +39,34 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preference_schedule);
 
-        Preference prefMonday = findPreference("key_time_monday");
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        prefMonday = findPreference("key_time_monday");
         prefMonday.setOnPreferenceClickListener(this);
-        Preference prefTuesday = findPreference("key_time_tuesday");
+        prefTuesday = findPreference("key_time_tuesday");
         prefTuesday.setOnPreferenceClickListener(this);
-        Preference prefWednesday = findPreference("key_time_wednesday");
+        prefWednesday = findPreference("key_time_wednesday");
         prefWednesday.setOnPreferenceClickListener(this);
-        Preference prefThursday = findPreference("key_time_thursday");
+        prefThursday = findPreference("key_time_thursday");
         prefThursday.setOnPreferenceClickListener(this);
-        Preference prefFriday = findPreference("key_time_friday");
+        prefFriday = findPreference("key_time_friday");
         prefFriday.setOnPreferenceClickListener(this);
+
+        setPrefSummaries();
+    }
+    private void setPrefSummaries(){
+        String DEFAULT = getString(R.string.default_time);
+        prefMonday.setSummary(sharedPreferences.getString("key_time_monday", DEFAULT));
+        prefTuesday.setSummary(sharedPreferences.getString("key_time_tuesday", DEFAULT));
+        prefWednesday.setSummary(sharedPreferences.getString("key_time_wednesday", DEFAULT));
+        prefThursday.setSummary(sharedPreferences.getString("key_time_thursday", DEFAULT));
+        prefFriday.setSummary(sharedPreferences.getString("key_time_friday", DEFAULT));
+
     }
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        new TimeIntervalPreference(preference,context);
+        new TimeIntervalPreferenceDialog(preference,context).showDialog();
         return true;
     }
 }

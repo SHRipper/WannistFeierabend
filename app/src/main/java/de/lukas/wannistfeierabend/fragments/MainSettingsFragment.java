@@ -10,8 +10,9 @@ import android.preference.PreferenceFragment;
 import android.util.Log;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.util.TimePreferenceDialog;
 
-public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
+public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
 
     Context context;
 
@@ -35,11 +36,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if (preference.getKey().equals("key_notifications_time")){
-            Log.d("SettingsFragment", "i dont know yet was clicked");
-
+            Log.d("MainSettingsFragment", "i dont know yet was clicked");
+            new TimePreferenceDialog(preference, this.context).showDialog();
         }
         if (preference.getKey().equals("key_schedule")){
-            Log.d("SettingsFragment", "create schedule was clicked.");
+            Log.d("MainSettingsFragment", "create schedule was clicked.");
             getFragmentManager().beginTransaction()
                     .addToBackStack("main_settings")
                     .replace(R.id.settings_fragment, new ScheduleFragment())

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="Dein Stundenplan">
-        <Preference android:title="Montag" android:summary="8:00 - 13:00" android:key="key_time_monday"></Preference>
-        <Preference android:title="Dienstag" android:summary="8:00 - 13:00" android:key="key_time_tuesday"></Preference>
-        <Preference android:title="Mittwoch" android:summary="8:00 - 13:00" android:key="key_time_wednesday"></Preference>
-        <Preference android:title="Donnerstag" android:summary="8:00 - 13:00" android:key="key_time_thursday"></Preference>
-        <Preference android:title="Freitag" android:summary="8:00 - 13:00" android:key="key_time_friday"></Preference>
+        <Preference android:title="Montag"  android:key="key_time_monday"></Preference>
+        <Preference android:title="Dienstag" android:key="key_time_tuesday"></Preference>
+        <Preference android:title="Mittwoch" android:defaultValue="" android:key="key_time_wednesday"></Preference>
+        <Preference android:title="Donnerstag" android:key="key_time_thursday"></Preference>
+        <Preference android:title="Freitag" android:key="key_time_friday"></Preference>
     </PreferenceCategory>
 </PreferenceScreen>

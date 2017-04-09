@@ -15,7 +15,6 @@ import android.view.MenuItem;
 
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.fragments.PercentFragment;
-import de.lukas.wannistfeierabend.fragments.SettingsFragment;
 import de.lukas.wannistfeierabend.fragments.TimeFragment;
 
 public class MainActivity extends AppCompatActivity {

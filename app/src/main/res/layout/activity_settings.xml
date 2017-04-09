@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/settings_fragment"
-        android:name="de.lukas.wannistfeierabend.fragments.SettingsFragment"
+        android:name="de.lukas.wannistfeierabend.fragments.MainSettingsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
