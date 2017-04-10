@@ -3,13 +3,15 @@
     <PreferenceCategory android:title="Benachrichtigungen">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="key_enable_notifications"
-            android:title="Benachrichtigungen"/>
+            android:key="key_notifications_enable"
+            android:title="Benachrichtigungen"
+            />
 
         <Preference
-            android:key="key_notifications_time"
-            android:title="Benachrichtigungszeit"
-            android:dependency="key_enable_notifications" />
+            android:key="key_notifications_intervall"
+            android:title="Intervall"
+            android:summary="Nie"
+            android:dependency="key_notifications_enable" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Stundenplan">

@@ -24,6 +24,8 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import de.lukas.wannistfeierabend.R;
@@ -136,14 +138,18 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     }
     private String getWeekdayKey(){
         Calendar c = Calendar.getInstance();
-        c.setFirstDayOfWeek(Calendar.MONDAY);
-        Log.d("","Day index" + c.DAY_OF_WEEK);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        Log.d("","Day index" + dayOfWeek);
+
         String weekdays[] = {"key_time_monday", "key_time_tuesday",
         "key_time_wednesday", "key_time_thursday", "key_time_friday"};
-        if (c.DAY_OF_WEEK > 5){
-            return "key_time_tuesday";
+
+        // sunday is 1 and saturday is 7, monday = 2 to friday = 6
+        if (dayOfWeek > 6 || dayOfWeek == 1){
+            return "none";
         }
-        return weekdays[c.DAY_OF_WEEK-1];
+        // monday = 2-2 = 0; friday = 6-2=4
+        return weekdays[dayOfWeek-2];
     }
 
     @Override

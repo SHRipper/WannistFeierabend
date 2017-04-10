@@ -8,6 +8,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.AttributeSet;
 import android.util.Log;
 
 import de.lukas.wannistfeierabend.R;
@@ -25,13 +26,23 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        Preference notificationPreference = findPreference("key_notifications_time");
+        Preference notificationPreference = findPreference("key_notifications_intervall");
+        Preference notificationEnable = findPreference("key_notifications_enable");
         Preference schedulePreference = findPreference("key_schedule");
+        notificationEnable.setOnPreferenceClickListener(this);
         notificationPreference.setOnPreferenceClickListener(this);
         schedulePreference.setOnPreferenceClickListener(this);
-
-        notificationPreference.setSummary(sharedPreferences.getString("key_notifications_time", "8:00"));
+        setBooleanSummary(notificationEnable);
     }
+
+    private void setBooleanSummary(Preference pref){
+        if (sharedPreferences.getBoolean(pref.getKey(),false)){
+            pref.setSummary("An");
+        }else{
+            pref.setSummary("Aus");
+        }
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -41,16 +52,22 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if (preference.getKey().equals("key_notifications_time")){
+        if (preference.getKey().equals("key_notifications_intervall")) {
             Log.d("MainSettingsFragment", "preference clicked: " + preference.getKey());
-            new TimePreferenceDialog(preference, this.context).showDialog();
+            getFragmentManager().beginTransaction()
+                    .addToBackStack("main_settings")
+                    .replace(R.id.settings_fragment, new IntervalFragment())
+                    .commit();
         }
-        if (preference.getKey().equals("key_schedule")){
+        if (preference.getKey().equals("key_schedule")) {
             Log.d("MainSettingsFragment", "create schedule was clicked.");
             getFragmentManager().beginTransaction()
                     .addToBackStack("main_settings")
                     .replace(R.id.settings_fragment, new ScheduleFragment())
                     .commit();
+        }
+        if (preference.getKey().equals("key_notifications_enable")) {
+            setBooleanSummary(preference);
         }
         return true;
     }
