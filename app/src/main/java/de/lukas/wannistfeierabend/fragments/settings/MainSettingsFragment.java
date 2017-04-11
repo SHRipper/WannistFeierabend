@@ -1,19 +1,15 @@
-package de.lukas.wannistfeierabend.fragments;
+package de.lukas.wannistfeierabend.fragments.settings;
 
 import android.app.FragmentManager;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.AttributeSet;
 import android.util.Log;
 
 import de.lukas.wannistfeierabend.R;
-import de.lukas.wannistfeierabend.util.TimePreferenceDialog;
 
 public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, FragmentManager.OnBackStackChangedListener{
 
@@ -35,8 +31,11 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         notificationPreference.setOnPreferenceClickListener(this);
         schedulePreference.setOnPreferenceClickListener(this);
         setBooleanSummary(notificationEnable);
-
+        setIntervallSummary();
         getFragmentManager().addOnBackStackChangedListener(this);
+
+
+
     }
 
     private void setBooleanSummary(Preference pref){
@@ -59,9 +58,13 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             summary += "75%";
         }
         Log.d("MainSettings",summary);
-        summary = summary.replace("%", "%, ");
-        summary = summary.substring(0,summary.length() -2);
-        notificationPreference.setSummary(summary);
+        if (summary.length() != 0) {
+            summary = summary.replace("%", "%, ");
+            summary = summary.substring(0, summary.length() - 2);
+            notificationPreference.setSummary(summary);
+        }else{
+            notificationPreference.setSummary("Nie");
+        }
     }
     @Override
     public void onAttach(Context context) {

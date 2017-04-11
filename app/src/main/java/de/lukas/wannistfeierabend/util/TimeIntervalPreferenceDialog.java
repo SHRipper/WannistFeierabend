@@ -32,8 +32,6 @@ public class TimeIntervalPreferenceDialog {
 
     TimePickerDialog startIntervalDialog;
     TimePickerDialog endIntervalDialog;
-    TimePickerDialog.OnTimeSetListener startIntervallSetListener;
-    TimePickerDialog.OnTimeSetListener endIntervallSetListener;
 
     /**
      * Initialize the class with needed information.
@@ -51,36 +49,41 @@ public class TimeIntervalPreferenceDialog {
     public void showDialog(){
         int initTimes[] = getInitTimes();
 
-        endIntervalDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                Log.d("IntervalPreference","end time was set to: " + hourOfDay + ":" + minute);
-                endInMinutes = hourOfDay *60 + minute;
-                summary += String.format("%d:%02d", hourOfDay,minute);
-
-                if (endInMinutes < startInMinutes){
-                    // start can not be later that the end
-                    Toast.makeText(context, context.getString(R.string.error_de_end_before_start),
-                            Toast.LENGTH_LONG).show();
-                }else{
-                    // set summary and save
-                    preference.setSummary(summary);
-                    setPreference();
-                }
-            }
-        }, initTimes[2], initTimes[3], true);
-
-        startIntervalDialog = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                Log.d("IntervalPreference","start time was set to: " + hourOfDay + ":" + minute);
-                startInMinutes = hourOfDay*60 + minute;
-                summary += String.format("%d:%02d - ",hourOfDay,minute);
-                endIntervalDialog.show();
-            }
-        }, initTimes[0], initTimes[1], true);
+        endIntervalDialog = new TimePickerDialog(context, second, initTimes[2], initTimes[3], true);
+        endIntervalDialog.setTitle("Endzeit");
+        startIntervalDialog = new TimePickerDialog(context, first, initTimes[0], initTimes[1], true);
+        startIntervalDialog.setTitle("Startzeit");
         startIntervalDialog.show();
     }
+
+    private final TimePickerDialog.OnTimeSetListener first = new TimePickerDialog.OnTimeSetListener(){
+        @Override
+        public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+            Log.d("IntervalPreference","start time was set to: " + hourOfDay + ":" + minute);
+            startInMinutes = hourOfDay*60 + minute;
+            summary += String.format("%d:%02d - ",hourOfDay,minute);
+            endIntervalDialog.show();
+        }
+    };
+
+    private final TimePickerDialog.OnTimeSetListener second = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+            Log.d("IntervalPreference","end time was set to: " + hourOfDay + ":" + minute);
+            endInMinutes = hourOfDay *60 + minute;
+            summary += String.format("%d:%02d", hourOfDay,minute);
+
+            if (endInMinutes < startInMinutes){
+                // start can not be later that the end
+                Toast.makeText(context, context.getString(R.string.error_de_end_before_start),
+                        Toast.LENGTH_LONG).show();
+            }else{
+                // set summary and save
+                preference.setSummary(summary);
+                setPreference();
+            }
+        }
+    };
 
     /**
      * Returns an array of the current time values saved for the given preference key

@@ -1,4 +1,4 @@
-package de.lukas.wannistfeierabend.fragments;
+package de.lukas.wannistfeierabend.fragments.settings;
 
 
 import android.content.Context;

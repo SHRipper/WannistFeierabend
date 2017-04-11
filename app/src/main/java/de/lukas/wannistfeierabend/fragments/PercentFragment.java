@@ -3,6 +3,7 @@ package de.lukas.wannistfeierabend.fragments;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,19 +37,19 @@ import de.lukas.wannistfeierabend.R;
  * Created by Lukas on 05.10.2016.
  */
 
-public class PercentFragment extends Fragment implements FloatingActionButton.OnClickListener{
+public class PercentFragment extends Fragment implements FloatingActionButton.OnClickListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     ProgressBar progressBar;
     TextView textProgress;
     FloatingActionButton fab;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     int animatorDuration;
     int progressBarMax;
+    int progressDone;
 
     ObjectAnimator objectAnimator;
-
-    long startTime;
-    long endTime;
 
     SharedPreferences sharedPreferences;
 
@@ -54,17 +57,21 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // show percent fragment
-        View view = inflater.inflate(R.layout.fragment_percent,container,false);
+        View view = inflater.inflate(R.layout.fragment_percent, container, false);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         textProgress = (TextView) view.findViewById(R.id.text_process_state);
 
         progressBarMax = progressBar.getMax();
-        Log.d("PercentFragment","Progressbar max: " + progressBarMax);
+        Log.d("PercentFragment", "Progressbar max: " + progressBarMax);
         animatorDuration = getContext().getResources().getInteger(R.integer.animator_duration);
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab_refresh);
         fab.setOnClickListener(this);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
         return view;
     }
@@ -79,30 +86,30 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
 
     }
 
-    private void startProgressAnim(){
-        Log.d("PercentFragment","startProgressAnim called");
+    private void startProgressAnim() {
+        Log.d("PercentFragment", "startProgressAnim called");
 
-        objectAnimator = ObjectAnimator.ofInt (progressBar, "progress" , 0, getPercentDone());
-        objectAnimator.setDuration (animatorDuration);
-        objectAnimator.setInterpolator (new FastOutSlowInInterpolator());
-        objectAnimator.start ();
+        objectAnimator = ObjectAnimator.ofInt(progressBar, "progress", 0, getPercentDone());
+        objectAnimator.setDuration(animatorDuration);
+        objectAnimator.setInterpolator(new FastOutSlowInInterpolator());
+        objectAnimator.start();
 
         objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                int currentValue =(int) objectAnimator.getAnimatedValue();
-                textProgress.setText((currentValue/10) +"%");
-                if (currentValue == progressBar.getMax()){
-                    textProgress.setText(textProgress.getText()+ "\nGeschafft!");
+                int currentValue = (int) objectAnimator.getAnimatedValue();
+                textProgress.setText((currentValue / 10) + "%");
+                if (currentValue == progressBar.getMax()) {
+                    textProgress.setText(textProgress.getText() + "\nGeschafft!");
                 }
             }
         });
     }
 
-    private int getPercentDone(){
+    private int getPercentDone() {
 
         String weekday = getWeekdayKey();
-        if (weekday.equals("none")){
+        if (weekday.equals("none")) {
             return 0;
         }
         String time = sharedPreferences.getString(weekday, "0:00 - 21:00");
@@ -113,59 +120,59 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
         c.setTimeZone(TimeZone.getDefault());
-        int currentTime = (c.get(Calendar.MINUTE) + c.get(Calendar.HOUR_OF_DAY)* 60) - startTime;
+        int currentTime = (c.get(Calendar.MINUTE) + c.get(Calendar.HOUR_OF_DAY) * 60) - startTime;
         int timePeriod = (endTime - startTime);
-        int percentageDone = (int) Math.round((currentTime / (double)timePeriod) * 100);
-        Log.d("Time","" + timePeriod);
-        Log.d("Time","" + currentTime);
-        Log.d("Time","" +  percentageDone);
+        progressDone = (int) Math.round((currentTime / (double) timePeriod) * 100);
+        Log.d("Time", "" + timePeriod);
+        Log.d("Time", "" + currentTime);
+        Log.d("Time", "" + progressDone);
 
-        if (percentageDone > 100){
-            return 100 * 10;
-        }
-        return percentageDone * 10;
+        if (progressDone > 100) progressDone = 100 * 10;
+        if (progressDone < 0) progressDone = 0;
+        return progressDone * 10;
     }
-    private int[] getTimesInMinutes(String key){
+
+    private int[] getTimesInMinutes(String key) {
         int times[] = new int[2];
-        String time[] = sharedPreferences.getString(key,"8:00 - 13:00").split(" - ");
+        String time[] = sharedPreferences.getString(key, "8:00 - 13:00").split(" - ");
 
         String startTime = time[0];
         String endTime = time[1];
 
-        times[0] = Integer.parseInt(startTime.split(":")[0])* 60 + Integer.parseInt(startTime.split(":")[1]);
-        times[1] = Integer.parseInt(endTime.split(":")[0])*60+Integer.parseInt(endTime.split(":")[1]);
+        times[0] = Integer.parseInt(startTime.split(":")[0]) * 60 + Integer.parseInt(startTime.split(":")[1]);
+        times[1] = Integer.parseInt(endTime.split(":")[0]) * 60 + Integer.parseInt(endTime.split(":")[1]);
         return times;
     }
-    private String getWeekdayKey(){
+
+    private String getWeekdayKey() {
         Calendar c = Calendar.getInstance();
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        Log.d("","Day index" + dayOfWeek);
+        Log.d("", "Day index" + dayOfWeek);
 
         String weekdays[] = {"key_time_monday", "key_time_tuesday",
-        "key_time_wednesday", "key_time_thursday", "key_time_friday"};
+                "key_time_wednesday", "key_time_thursday", "key_time_friday"};
 
         // sunday is 1 and saturday is 7, monday = 2 to friday = 6
-        if (dayOfWeek > 6 || dayOfWeek == 1){
+        if (dayOfWeek > 6 || dayOfWeek == 1) {
             return "none";
         }
         // monday = 2-2 = 0; friday = 6-2=4
-        return weekdays[dayOfWeek-2];
+        return weekdays[dayOfWeek - 2];
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        if (isVisibleToUser && sharedPreferences != null){
+        if (isVisibleToUser && sharedPreferences != null) {
             Log.d("PercentFragment", "PercentFragment was selected");
             startProgressAnim();
-        }
-        else {
-            try{
+        } else {
+            try {
                 progressBar.setProgress(0);
                 textProgress.setText("0%");
-            }catch (NullPointerException e){
-                Log.d("PercentFragment","NullPointerException raised during View modification");
+            } catch (NullPointerException e) {
+                Log.d("PercentFragment", "NullPointerException raised during View modification");
             }
 
         }
@@ -181,26 +188,38 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     public void onPause() {
         super.onPause();
         resetProgress();
-
     }
 
     @Override
     public void onClick(View view) {
-        Log.d("PercentFragment","Reset FAB clicked.");
+        Log.d("PercentFragment", "Reset FAB clicked.");
         // FAB onClick to refresh the animation process
-        if (!objectAnimator.isRunning()){
-            resetProgress();
-            startProgressAnim();
+        String message = "Ich habe schon\n*" + progressDone + "%*\ndes Tages geschafft!" +
+                "\n\nJetzt die App herunterladen: https://goo.gl/mWJnVY";
+        //todo: link zur aktuellen apk einfügen
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setPackage("com.whatsapp");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+
+    }
+
+    private void resetProgress() {
+        Log.d("PercentFragment", "reset Progress called.");
+        try {
+            progressBar.setProgress(0);
+            textProgress.setText("0%");
+        } catch (NullPointerException e) {
+            Log.d("PercentFragment", "NullPointerException raised during View modification");
         }
     }
 
-    private void resetProgress(){
-        Log.d("PercentFragment","reset Progress called.");
-        try{
-            progressBar.setProgress(0);
-            textProgress.setText("0%");
-        }catch (NullPointerException e){
-            Log.d("PercentFragment","NullPointerException raised during View modification");
-        }
+    @Override
+    public void onRefresh() {
+        resetProgress();
+        startProgressAnim();
+        swipeRefreshLayout.setRefreshing(false);
     }
 }
