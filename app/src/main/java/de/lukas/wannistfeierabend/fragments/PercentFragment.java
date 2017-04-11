@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.util.TimeManager;
 
 /**
  * Created by Lukas on 05.10.2016.
@@ -83,7 +84,6 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
 
         startProgressAnim();
         resetProgress();
-
     }
 
     private void startProgressAnim() {
@@ -107,58 +107,21 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     }
 
     private int getPercentDone() {
+        TimeManager tm = new TimeManager(getContext());
+        int times[] = tm.getTimeInMinutesForToday();
+        int timePeriod = tm.getTimePeriodMinutes(times[0],times[1]);
+        progressDone = (int) Math.round((tm.getTimePeriodDone() / (double) timePeriod) * 100);
+        Log.d("Time", "Period: " + timePeriod);
+        Log.d("Time", "Current: " + tm.getTimePeriodDone());
+        Log.d("Time", "Done in %: " + progressDone);
 
-        String weekday = getWeekdayKey();
-        if (weekday.equals("none")) {
-            return 0;
-        }
-        String time = sharedPreferences.getString(weekday, "0:00 - 21:00");
-        Log.d("Pref time", time);
-        int times[] = getTimesInMinutes(weekday);
-        int endTime = times[1];
-        int startTime = times[0];
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(System.currentTimeMillis());
-        c.setTimeZone(TimeZone.getDefault());
-        int currentTime = (c.get(Calendar.MINUTE) + c.get(Calendar.HOUR_OF_DAY) * 60) - startTime;
-        int timePeriod = (endTime - startTime);
-        progressDone = (int) Math.round((currentTime / (double) timePeriod) * 100);
-        Log.d("Time", "" + timePeriod);
-        Log.d("Time", "" + currentTime);
-        Log.d("Time", "" + progressDone);
-
-        if (progressDone > 100) progressDone = 100 * 10;
+        if (progressDone > 100) progressDone = 100;
         if (progressDone < 0) progressDone = 0;
         return progressDone * 10;
     }
 
-    private int[] getTimesInMinutes(String key) {
-        int times[] = new int[2];
-        String time[] = sharedPreferences.getString(key, "8:00 - 13:00").split(" - ");
 
-        String startTime = time[0];
-        String endTime = time[1];
 
-        times[0] = Integer.parseInt(startTime.split(":")[0]) * 60 + Integer.parseInt(startTime.split(":")[1]);
-        times[1] = Integer.parseInt(endTime.split(":")[0]) * 60 + Integer.parseInt(endTime.split(":")[1]);
-        return times;
-    }
-
-    private String getWeekdayKey() {
-        Calendar c = Calendar.getInstance();
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        Log.d("", "Day index" + dayOfWeek);
-
-        String weekdays[] = {"key_time_monday", "key_time_tuesday",
-                "key_time_wednesday", "key_time_thursday", "key_time_friday"};
-
-        // sunday is 1 and saturday is 7, monday = 2 to friday = 6
-        if (dayOfWeek > 6 || dayOfWeek == 1) {
-            return "none";
-        }
-        // monday = 2-2 = 0; friday = 6-2=4
-        return weekdays[dayOfWeek - 2];
-    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -169,8 +132,7 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
             startProgressAnim();
         } else {
             try {
-                progressBar.setProgress(0);
-                textProgress.setText("0%");
+                resetProgress();
             } catch (NullPointerException e) {
                 Log.d("PercentFragment", "NullPointerException raised during View modification");
             }

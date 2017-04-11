@@ -1,6 +1,7 @@
 <resources>
     <!-- Application names -->
-    <string name="app_name">Wann ist Feierabend?</string>
+    <string name="app_name">Feierabend?</string>
+    <string name="in_app_header">Wann ist Feierabend?</string>
     <string name="action_settings">Einstellungen</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="notification_settings_header">Benachrichtigungen</string>

@@ -1,12 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="de.lukas.wannistfeierabend.fragments.TimeFragment">
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/colorCardView"
+        card_view:cardCornerRadius="6dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <TextView
+                android:id="@+id/txtPreMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Vergangene Zeit"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/txtPreMessage"
+                android:layout_marginTop="3dp"
+                android:background="@color/colorSeperator" />
+
+            <TextView
+                android:id="@+id/txtHours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_below="@id/separator"
+                android:text="hh:mm:ss"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="45dp" />
+<!--
+            <TextView
+                android:id="@+id/txtMinutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/txtHours"
+                android:text="Minuten"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/txtSeconds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtMinutes"
+                android:layout_marginTop="10dp"
+                android:text="Sekunden"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp" />
+                -->
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view2"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_below="@id/card_view"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/colorCardView"
+        card_view:cardCornerRadius="6dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <TextView
+                android:id="@+id/txtPreMessage2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Verbleibende Zeit"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/separator2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/txtPreMessage2"
+                android:layout_marginTop="3dp"
+                android:background="@color/colorSeperator" />
+
+            <TextView
+                android:id="@+id/txtHours2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_below="@id/separator2"
+                android:text="hh:mm:ss"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+
+                android:textSize="45dp" />
+<!--
+            <TextView
+                android:id="@+id/txtMinutes2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/txtHours2"
+                android:text="Minuten"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/txtSeconds2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/txtMinutes2"
+                android:text="Sekunden"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="20dp" />
+                -->
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

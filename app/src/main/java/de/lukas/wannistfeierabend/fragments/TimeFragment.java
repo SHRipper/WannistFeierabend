@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.util.TimeManager;
 
 /**
  * Created by Lukas on 05.10.2016.
@@ -21,14 +22,25 @@ import de.lukas.wannistfeierabend.R;
 
 public class TimeFragment extends Fragment {
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_time, container, false);
 
         return view;
+
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("formatted time",new TimeManager(getActivity()).getPassedTime());
 
-
+    }
 }
