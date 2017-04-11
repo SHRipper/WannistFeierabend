@@ -1,5 +1,6 @@
 package de.lukas.wannistfeierabend.fragments;
 
+import android.app.FragmentManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,10 +15,11 @@ import android.util.Log;
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.util.TimePreferenceDialog;
 
-public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
+public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, FragmentManager.OnBackStackChangedListener{
 
     Context context;
     SharedPreferences sharedPreferences;
+    Preference notificationPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,13 +28,15 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        Preference notificationPreference = findPreference("key_notifications_intervall");
+        notificationPreference = findPreference("key_notifications_intervall");
         Preference notificationEnable = findPreference("key_notifications_enable");
         Preference schedulePreference = findPreference("key_schedule");
         notificationEnable.setOnPreferenceClickListener(this);
         notificationPreference.setOnPreferenceClickListener(this);
         schedulePreference.setOnPreferenceClickListener(this);
         setBooleanSummary(notificationEnable);
+
+        getFragmentManager().addOnBackStackChangedListener(this);
     }
 
     private void setBooleanSummary(Preference pref){
@@ -43,7 +47,22 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         }
     }
 
-
+    private void setIntervallSummary(){
+        String summary = "";
+        if (sharedPreferences.getBoolean("key_notifications_25", false)){
+            summary += "25%";
+        }
+        if (sharedPreferences.getBoolean("key_notifications_50", false)){
+            summary += "50%";
+        }
+        if (sharedPreferences.getBoolean("key_notifications_75", false)){
+            summary += "75%";
+        }
+        Log.d("MainSettings",summary);
+        summary = summary.replace("%", "%, ");
+        summary = summary.substring(0,summary.length() -2);
+        notificationPreference.setSummary(summary);
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -70,5 +89,10 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             setBooleanSummary(preference);
         }
         return true;
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        setIntervallSummary();
     }
 }
