@@ -25,7 +25,7 @@ import de.lukas.wannistfeierabend.util.TimeManager;
  */
 
 public class TimeFragment extends Fragment {
-    TextView txtPassed, txtRemaining;
+    TextView txtPassed, txtRemaining, txtPassedHeader, txtRemainingHeader;
     Handler handler = new Handler();
     TimeManager tm;
 
@@ -61,8 +61,14 @@ public class TimeFragment extends Fragment {
 
         txtPassed = (TextView) view.findViewById(R.id.txtPassed);
         txtRemaining = (TextView) view.findViewById(R.id.txtRemaining);
+        txtPassedHeader = (TextView) view.findViewById(R.id.txtPassedHeader);
+        txtRemainingHeader = (TextView) view.findViewById(R.id.txtRemainingHeader);
 
         tm = new TimeManager(getActivity());
+        String times[] = tm.getClockTimesforToday();
+        txtPassedHeader.setText("Vergangene Zeit seit " + times[0] + " Uhr");
+        txtRemainingHeader.setText("Verbleibende Zeit bis " + times[1] + " Uhr");
+
         setTimer();
         return view;
     }
@@ -84,6 +90,7 @@ public class TimeFragment extends Fragment {
     };
 
     private void setTimer(){
+
         if (txtPassed != null && txtRemaining != null){
             txtPassed.setText(tm.getPassedTime());
             txtRemaining.setText(tm.getRemainingTime());

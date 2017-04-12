@@ -73,7 +73,7 @@ public class TimeIntervalPreferenceDialog {
             endInMinutes = hourOfDay *60 + minute;
             summary += String.format("%d:%02d", hourOfDay,minute);
 
-            if (endInMinutes < startInMinutes){
+            if (endInMinutes <= startInMinutes){
                 // start can not be later that the end
                 Toast.makeText(context, context.getString(R.string.error_de_end_before_start),
                         Toast.LENGTH_LONG).show();

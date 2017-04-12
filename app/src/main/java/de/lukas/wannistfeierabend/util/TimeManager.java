@@ -35,9 +35,21 @@ public class TimeManager {
         c = Calendar.getInstance();
         String s[] = new String[2];
         int time[] = getTimeInMinutesForToday();
-        int passed = Math.abs((c.get(Calendar.HOUR_OF_DAY)*3600
-                + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND)) - time[0] * 60);
+
+        int passed = (c.get(Calendar.HOUR_OF_DAY)*3600
+                + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND)) - time[0] * 60;
+
         int remaining = Math.abs((getTimePeriodMinutes(time[0], time[1]) *60) - passed);
+
+        int periodSec = (time[1] - time[0]) * 60;
+        if (passed < 0){
+            passed = 0;
+            remaining = 0;
+        } else if (passed >= periodSec){
+            passed = periodSec;
+            remaining = 0;
+        }
+
 
         Log.d("passed", "" + passed);
         Log.d("remaining", "" + remaining);
@@ -67,6 +79,17 @@ public class TimeManager {
     public int[] getTimeInMinutesForToday() {
         String time = sharedPreferences.getString(getWeekdayKey(), "8:00 - 13:00");
         return splitTimeStringToTimesInMinutes(time);
+    }
+    public String[] getClockTimesforToday(){
+        int times[] = getTimeInMinutesForToday();
+        String s[] = new String[2];
+        int hour, minute;
+        for (int i = 0; i < 2; i++) {
+            hour = times[i] / 60;
+            minute = times[i] % 60;
+            s[i] = String.format("%d:%02d", hour, minute);
+        }
+        return s;
     }
     private int[] splitTimeStringToTimesInMinutes(String t){
         String time[] = t.split(" - ");
