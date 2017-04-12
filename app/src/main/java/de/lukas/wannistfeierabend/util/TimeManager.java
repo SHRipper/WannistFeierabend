@@ -26,14 +26,18 @@ public class TimeManager {
         return (c.get(Calendar.HOUR_OF_DAY)*60 + c.get(Calendar.MINUTE)) - startTime;
     }
     public String getRemainingTime(){
-       return "";
+        return getPassedAndRemainingTime()[1];
     }
     public String getPassedTime(){
+        return getPassedAndRemainingTime()[0];
+    }
+    private String[] getPassedAndRemainingTime(){
         c = Calendar.getInstance();
+        String s[] = new String[2];
         int time[] = getTimeInMinutesForToday();
-        int passed = (c.get(Calendar.HOUR_OF_DAY)*3600
-                + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND)) - time[0] * 60;
-        int remaining = (getTimePeriodMinutes(time[0], time[1]) *60) - passed;
+        int passed = Math.abs((c.get(Calendar.HOUR_OF_DAY)*3600
+                + c.get(Calendar.MINUTE)*60 + c.get(Calendar.SECOND)) - time[0] * 60);
+        int remaining = Math.abs((getTimePeriodMinutes(time[0], time[1]) *60) - passed);
 
         Log.d("passed", "" + passed);
         Log.d("remaining", "" + remaining);
@@ -42,11 +46,19 @@ public class TimeManager {
         int seconds = passed % 60;
         int minutes = (passed /60) % 60;
         int hours = passed / 3600;
-        return String.format("%02d:%02d:%02d",hours,minutes,seconds);
+        s[0] = String.format("%02d:%02d:%02d",hours,minutes,seconds);
+
+        seconds = remaining % 60;
+        minutes = (remaining / 60) % 60;
+        hours = remaining / 3600;
+        s[1] = String.format("%02d:%02d:%02d",hours,minutes,seconds);
+
+        return s;
     }
     public int getTimePeriodMinutes(int startTime, int endTime){
         return endTime - startTime;
     }
+
     public int getTimePeriodMinutes(String timePeriod){
         int i[] = splitTimeStringToTimesInMinutes(timePeriod);
         // endtime minus starttime
