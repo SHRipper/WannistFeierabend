@@ -1,9 +1,17 @@
 package de.lukas.wannistfeierabend.activities;
 
+import android.Manifest;
 import android.app.ActivityManager;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
 import android.os.UserManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,12 +24,32 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.android.AuthActivity;
+import com.dropbox.client2.exception.DropboxException;
+import com.dropbox.client2.session.AppKeyPair;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.core.MyVersionChecker;
 import de.lukas.wannistfeierabend.fragments.PercentFragment;
 import de.lukas.wannistfeierabend.fragments.TimeFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -39,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private PercentFragment percentFragment;
     private TimeFragment timeFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
         percentFragment = new PercentFragment();
         timeFragment = new TimeFragment();
-    }
 
+    }
 
 
     @Override
@@ -88,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -110,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = timeFragment;
                     break;
                 default:
-                    fragment =  percentFragment;
+                    fragment = percentFragment;
 
             }
             return fragment;

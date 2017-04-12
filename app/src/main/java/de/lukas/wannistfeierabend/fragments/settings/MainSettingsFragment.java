@@ -8,14 +8,16 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.util.UpdateManager;
 
 public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, FragmentManager.OnBackStackChangedListener{
 
     Context context;
     SharedPreferences sharedPreferences;
-    Preference notificationPreference;
+    Preference notificationPreference, updatePreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,17 +26,33 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
+        updatePreference = findPreference("key_updates_check");
         notificationPreference = findPreference("key_notifications_intervall");
         Preference notificationEnable = findPreference("key_notifications_enable");
         Preference schedulePreference = findPreference("key_schedule");
         notificationEnable.setOnPreferenceClickListener(this);
         notificationPreference.setOnPreferenceClickListener(this);
+        updatePreference.setOnPreferenceClickListener(this);
         schedulePreference.setOnPreferenceClickListener(this);
         setBooleanSummary(notificationEnable);
         setIntervallSummary();
         getFragmentManager().addOnBackStackChangedListener(this);
 
+        sharedPreferences = getPreferenceManager().getSharedPreferences();
+        if ("version_0.0".equals(sharedPreferences.getString("key_version", "version_0.0"))){
+            new UpdateManager(this,true).checkForUpdate();
+        }
+        findPreference("key_version").setSummary(sharedPreferences.getString("key_version", "default"));
 
+
+    }
+
+    public void noUpdate(){
+        Toast.makeText(getActivity(),"Die App ist auf dem neuesten Stand.",Toast.LENGTH_SHORT).show();
+    }
+
+    public void updateFound(String newVersion){
+        Toast.makeText(getActivity(),"ein update wurde gefunden: " + newVersion,Toast.LENGTH_SHORT).show();
 
     }
 
@@ -90,6 +108,10 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         }
         if (preference.getKey().equals("key_notifications_enable")) {
             setBooleanSummary(preference);
+        }
+        if (preference.getKey().equals("key_updates_check")){
+            UpdateManager um = new UpdateManager(this);
+            um.checkForUpdate();
         }
         return true;
     }

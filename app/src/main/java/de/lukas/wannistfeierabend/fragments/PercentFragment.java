@@ -156,8 +156,11 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     public void onClick(View view) {
         Log.d("PercentFragment", "Reset FAB clicked.");
         // FAB onClick to refresh the animation process
-        String message = "Ich habe schon\n*" + progressDone + "%*\ndes Tages geschafft!" +
-                "\n\nJetzt die App herunterladen: https://www.dropbox.com/s/evlig9jo46u6vjr/Wann%20ist%20Feierabend.apk?dl=1";
+        String message = "Ich habe schon\n*" + progressDone + "%*\ndes Tages geschafft!";
+        if (sharedPreferences.getBoolean("key_downloadlink_show",false)){
+            message += "\n\nJetzt die App herunterladen: "
+                    + getResources().getString(R.string.dropbox_download_link);
+        }
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.setPackage("com.whatsapp");

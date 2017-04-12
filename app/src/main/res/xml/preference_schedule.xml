@@ -6,5 +6,6 @@
         <Preference android:title="Mittwoch" android:key="key_time_wednesday"></Preference>
         <Preference android:title="Donnerstag" android:key="key_time_thursday"></Preference>
         <Preference android:title="Freitag" android:key="key_time_friday"></Preference>
+        <Preference android:title="Samstag" android:enabled="false" android:key="key_time_saturday"></Preference>
     </PreferenceCategory>
 </PreferenceScreen>

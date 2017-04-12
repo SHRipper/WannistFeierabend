@@ -109,10 +109,10 @@ public class TimeManager {
         Log.d("", "Day index" + dayOfWeek);
 
         String weekdays[] = {"key_time_monday", "key_time_tuesday",
-                "key_time_wednesday", "key_time_thursday", "key_time_friday"};
-
+                "key_time_wednesday", "key_time_thursday", "key_time_friday","key_time_saturday"};
+        int max = sharedPreferences.getBoolean("key_time_saturday",false) ? 7 : 6;
         // sunday is 1 and saturday is 7, monday = 2 to friday = 6
-        if (dayOfWeek > 6 || dayOfWeek == 1) {
+        if (dayOfWeek > max || dayOfWeek == 1) {
             return "none";
         }
         // monday = 2-2 = 0; friday = 6-2=4

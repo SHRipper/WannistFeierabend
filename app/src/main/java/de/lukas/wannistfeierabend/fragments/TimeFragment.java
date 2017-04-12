@@ -58,7 +58,6 @@ public class TimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_time, container, false);
 
-
         txtPassed = (TextView) view.findViewById(R.id.txtPassed);
         txtRemaining = (TextView) view.findViewById(R.id.txtRemaining);
         txtPassedHeader = (TextView) view.findViewById(R.id.txtPassedHeader);

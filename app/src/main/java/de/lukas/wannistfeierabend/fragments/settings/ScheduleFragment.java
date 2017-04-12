@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import de.lukas.wannistfeierabend.R;
-import de.lukas.wannistfeierabend.util.TimeIntervalPreferenceDialog;
+import de.lukas.wannistfeierabend.core.TimeIntervalPreferenceDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +26,7 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
     Preference prefWednesday;
     Preference prefThursday;
     Preference prefFriday;
+    Preference prefSaturday;
 
 
     @Override
@@ -51,6 +52,14 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
         prefThursday.setOnPreferenceClickListener(this);
         prefFriday = findPreference("key_time_friday");
         prefFriday.setOnPreferenceClickListener(this);
+        prefSaturday = findPreference("key_time_saturday");
+
+        if (sharedPreferences.getBoolean("key_saturday_show",false)){
+            prefSaturday.setOnPreferenceClickListener(this);
+            prefSaturday.setEnabled(true);
+        }else{
+            prefSaturday.setEnabled(false);
+        }
 
         setPrefSummaries();
     }
@@ -61,6 +70,8 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
         prefWednesday.setSummary(sharedPreferences.getString("key_time_wednesday", DEFAULT));
         prefThursday.setSummary(sharedPreferences.getString("key_time_thursday", DEFAULT));
         prefFriday.setSummary(sharedPreferences.getString("key_time_friday", DEFAULT));
+        prefSaturday.setSummary(sharedPreferences.getString("key_time_saturday", DEFAULT));
+
 
     }
 

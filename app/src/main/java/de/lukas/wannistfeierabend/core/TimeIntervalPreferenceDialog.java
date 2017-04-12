@@ -1,4 +1,4 @@
-package de.lukas.wannistfeierabend.util;
+package de.lukas.wannistfeierabend.core;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -49,11 +52,25 @@ public class TimeIntervalPreferenceDialog {
     public void showDialog(){
         int initTimes[] = getInitTimes();
 
-        endIntervalDialog = new TimePickerDialog(context, second, initTimes[2], initTimes[3], true);
-        endIntervalDialog.setTitle("Endzeit");
-        startIntervalDialog = new TimePickerDialog(context, first, initTimes[0], initTimes[1], true);
-        startIntervalDialog.setTitle("Startzeit");
+        endIntervalDialog = new TimePickerDialog(context,R.style.DialogTheme, second, initTimes[2], initTimes[3], true);
+        endIntervalDialog.setCustomTitle(getTitle(endIntervalDialog));
+        startIntervalDialog = new TimePickerDialog(context,R.style.DialogTheme, first, initTimes[0], initTimes[1], true);
+        startIntervalDialog.setCustomTitle(getTitle(startIntervalDialog));
         startIntervalDialog.show();
+    }
+
+    private View getTitle(TimePickerDialog tpd){
+        String title = "";
+        TextView tvTitle = new TextView(context);
+        if (tpd == endIntervalDialog) title = "Endzeit";
+        else if (tpd == startIntervalDialog) title = "Startzeit";
+        tvTitle.setText(title);
+        tvTitle.setTextSize(30f);
+        tvTitle.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+        tvTitle.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+        tvTitle.setPadding(5, 3, 5, 3);
+        tvTitle.setGravity(Gravity.CENTER_HORIZONTAL);
+        return tvTitle;
     }
 
     private final TimePickerDialog.OnTimeSetListener first = new TimePickerDialog.OnTimeSetListener(){
