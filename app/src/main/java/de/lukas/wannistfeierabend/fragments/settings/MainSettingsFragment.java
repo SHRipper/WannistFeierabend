@@ -30,13 +30,20 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         notificationPreference = findPreference("key_notifications_intervall");
         Preference notificationEnable = findPreference("key_notifications_enable");
         Preference schedulePreference = findPreference("key_schedule");
+        Preference showSaturdayPreference = findPreference("key_saturday_show");
+
         notificationEnable.setOnPreferenceClickListener(this);
         notificationPreference.setOnPreferenceClickListener(this);
         updatePreference.setOnPreferenceClickListener(this);
         schedulePreference.setOnPreferenceClickListener(this);
-        setBooleanSummary(notificationEnable);
-        setIntervallSummary();
+        showSaturdayPreference.setOnPreferenceClickListener(this);
+
         getFragmentManager().addOnBackStackChangedListener(this);
+
+        setBooleanSummary(notificationEnable,"An", "Aus");
+        setBooleanSummary(showSaturdayPreference, "Ja", "Nein");
+
+        setIntervallSummary();
 
         sharedPreferences = getPreferenceManager().getSharedPreferences();
         if ("version_0.0".equals(sharedPreferences.getString("key_version", "version_0.0"))){
@@ -56,11 +63,11 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
     }
 
-    private void setBooleanSummary(Preference pref){
+    private void setBooleanSummary(Preference pref, String enabled, String disabled){
         if (sharedPreferences.getBoolean(pref.getKey(),false)){
-            pref.setSummary("An");
+            pref.setSummary(enabled);
         }else{
-            pref.setSummary("Aus");
+            pref.setSummary(disabled);
         }
     }
 
@@ -107,7 +114,10 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                     .commit();
         }
         if (preference.getKey().equals("key_notifications_enable")) {
-            setBooleanSummary(preference);
+            setBooleanSummary(preference, "An", "Aus");
+        }
+        if (preference.getKey().equals("key_saturday_show")){
+            setBooleanSummary(preference, "Ja", "Nein");
         }
         if (preference.getKey().equals("key_updates_check")){
             UpdateManager um = new UpdateManager(this);
