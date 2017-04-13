@@ -11,7 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import de.lukas.wannistfeierabend.R;
-import de.lukas.wannistfeierabend.util.UpdateManager;
+import de.lukas.wannistfeierabend.core.UpdateManager;
 
 public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, FragmentManager.OnBackStackChangedListener{
 

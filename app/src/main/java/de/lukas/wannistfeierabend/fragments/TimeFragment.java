@@ -28,15 +28,20 @@ public class TimeFragment extends Fragment {
     TextView txtPassed, txtRemaining, txtPassedHeader, txtRemainingHeader;
     Handler handler = new Handler();
     TimeManager tm;
+    boolean fragmentVisible = false;
 
     int delay = 1000;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        fragmentVisible = isVisibleToUser;
         if (isVisibleToUser){
+            Log.d("Handler","start onVisible");
             startHandler();
         }else{
+            Log.d("Handler","stop onHide");
+
             stopHandler();
         }
     }
@@ -44,13 +49,17 @@ public class TimeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("Handler","stop onPause");
         stopHandler();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        startHandler();
+        if (fragmentVisible) {
+            Log.d("Handler", "start onResume");
+            startHandler();
+        }
     }
 
     @Nullable
@@ -89,7 +98,6 @@ public class TimeFragment extends Fragment {
     };
 
     private void setTimer(){
-
         if (txtPassed != null && txtRemaining != null){
             txtPassed.setText(tm.getPassedTime());
             txtRemaining.setText(tm.getRemainingTime());

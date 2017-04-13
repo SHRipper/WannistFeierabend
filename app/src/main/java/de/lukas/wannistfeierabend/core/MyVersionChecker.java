@@ -1,7 +1,6 @@
 package de.lukas.wannistfeierabend.core;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -9,8 +8,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import de.lukas.wannistfeierabend.util.UpdateManager;
 
 /**
  * Created by Lukas on 12.04.2017.
