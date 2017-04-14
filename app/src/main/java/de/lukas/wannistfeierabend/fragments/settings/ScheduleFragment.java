@@ -9,6 +9,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.core.TimeIntervalPreferenceDialog;
@@ -71,8 +73,6 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
         prefThursday.setSummary(sharedPreferences.getString("key_time_thursday", DEFAULT));
         prefFriday.setSummary(sharedPreferences.getString("key_time_friday", DEFAULT));
         prefSaturday.setSummary(sharedPreferences.getString("key_time_saturday", DEFAULT));
-
-
     }
 
     @Override
@@ -80,4 +80,5 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
         new TimeIntervalPreferenceDialog(preference,context).showDialog();
         return true;
     }
+
 }

@@ -1,9 +1,6 @@
 package de.lukas.wannistfeierabend.fragments;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.FragmentManager;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,11 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.util.TimeManager;
@@ -25,7 +18,7 @@ import de.lukas.wannistfeierabend.util.TimeManager;
  * Created by Lukas on 05.10.2016.
  */
 
-public class TimeFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class TimeFragment extends Fragment {
     TextView txtPassed, txtRemaining, txtPassedHeader, txtRemainingHeader;
     Handler handler = new Handler();
     TimeManager tm;
@@ -60,6 +53,7 @@ public class TimeFragment extends Fragment implements SharedPreferences.OnShared
         if (fragmentVisible) {
             Log.d("Handler", "start onResume");
             startHandler();
+            updateHeaders();
         }
     }
 
@@ -76,6 +70,7 @@ public class TimeFragment extends Fragment implements SharedPreferences.OnShared
         updateHeaders();
 
         setTimer();
+
         return view;
     }
 
@@ -111,10 +106,4 @@ public class TimeFragment extends Fragment implements SharedPreferences.OnShared
     }
 
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.startsWith("key_time_")){
-            updateHeaders();
-        }
-    }
 }
