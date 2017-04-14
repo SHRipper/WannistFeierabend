@@ -22,11 +22,23 @@ public class TimeManager {
         c.setTimeZone(TimeZone.getDefault());
     }
 
+    public int getPercentDone(){
+        int done = getTimePeriodDone();
+        int total = getTotalPeriodForToday();
+        return (int)((done / (double)total) *100);
+    }
+
     public int getTimePeriodDone(){
         c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
         int startTime = getTimeInMinutesForToday()[0];
         return (c.get(Calendar.HOUR_OF_DAY)*60 + c.get(Calendar.MINUTE)) - startTime;
+    }
+
+    public int getTotalPeriodForToday(){
+        int times[]  = getTimeInMinutesForToday();
+        Log.d("TimeManager", "total period in minutes today: " + (times[1] - times[0]));
+        return times[1] - times[0];
     }
 
     public String getRemainingTime(){
@@ -55,7 +67,6 @@ public class TimeManager {
             passed = periodSec;
             remaining = 0;
         }
-
 
         Log.d("passed", "" + passed);
         Log.d("remaining", "" + remaining);
@@ -115,7 +126,7 @@ public class TimeManager {
 
     private String getWeekdayKey() {
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        Log.d("", "Day index" + dayOfWeek);
+        Log.d("TimeManger", "Day index" + dayOfWeek);
 
         String weekdays[] = {"key_time_monday", "key_time_tuesday",
                 "key_time_wednesday", "key_time_thursday", "key_time_friday","key_time_saturday"};

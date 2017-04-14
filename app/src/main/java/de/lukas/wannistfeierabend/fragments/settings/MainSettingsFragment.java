@@ -29,6 +29,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     Preference notificationPreference, updatePreference;
     ProgressDialog progressDialog;
     UpdateManager um;
+    MyAlarmManger am;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,15 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             findPreference("key_version").setSummary("version_" + packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+        }
+
+        am = new MyAlarmManger(getActivity());
+        if (!sharedPreferences.getBoolean("key_notifications_enable",false)){
+            // notifications are not enabled -> cancel all alarms
+            am.cancelAllAlarms();
+        }else{
+            // notifications are enabled -> set next alarm
+            am.setNextAlarm(0);
         }
     }
 
@@ -174,8 +184,13 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         }
         if (preference.getKey().equals("key_notifications_enable")) {
             setBooleanSummary(preference, "An", "Aus");
-            if (sharedPreferences.getBoolean(preference.getKey(),false)){
-                MyAlarmManger.setAlarmManager(getActivity());
+            am = new MyAlarmManger(getActivity());
+            if (!sharedPreferences.getBoolean(preference.getKey(),false)){
+                // notifications are not enabled -> cancel all alarms
+                am.cancelAllAlarms();
+            }else{
+                // notifications are enabled -> set next alarm
+                am.setNextAlarm(0);
             }
         }
         if (preference.getKey().equals("key_saturday_show")){

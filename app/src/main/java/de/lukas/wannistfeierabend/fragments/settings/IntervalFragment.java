@@ -1,11 +1,11 @@
 package de.lukas.wannistfeierabend.fragments.settings;
 
-import android.content.SharedPreferences;
+
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
+
 import android.support.annotation.Nullable;
 
 import de.lukas.wannistfeierabend.R;
@@ -35,12 +35,9 @@ public class IntervalFragment extends PreferenceFragment implements OnPreference
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (sharedPreferences.getBoolean(preference.getKey(),false)){
-            MyAlarmManger.setAlarmManager(getActivity());
-        }else{
-            MyAlarmManger.cancelAlarmManager(getActivity());
-        }
+        MyAlarmManger am = new MyAlarmManger(getActivity());
+        am.cancelAllAlarms();
+        am.setNextAlarm(0);
         return true;
     }
 }

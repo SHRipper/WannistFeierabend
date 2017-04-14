@@ -14,6 +14,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("BootReciever", "boot completed");
-        MyAlarmManger.setAlarmManager(context);
+        MyAlarmManger am = new MyAlarmManger(context);
+        am.setNextAlarm(0);
     }
 }

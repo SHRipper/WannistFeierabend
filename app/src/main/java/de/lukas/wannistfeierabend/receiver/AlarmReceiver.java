@@ -12,6 +12,7 @@ import android.util.Log;
 
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.activities.MainActivity;
+import de.lukas.wannistfeierabend.core.MyAlarmManger;
 import de.lukas.wannistfeierabend.core.NotificationBuilder;
 
 /**
@@ -28,6 +29,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, buildNotification(context,percent));
+
+        MyAlarmManger am = new MyAlarmManger(context);
+        am.setNextAlarm(0);
     }
 
     private Notification buildNotification(Context context, int percent){
