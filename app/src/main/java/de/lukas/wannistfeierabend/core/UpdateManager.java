@@ -1,57 +1,92 @@
 package de.lukas.wannistfeierabend.core;
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import de.lukas.wannistfeierabend.core.MyVersionChecker;
+import android.widget.Toast;
+
 import de.lukas.wannistfeierabend.fragments.settings.MainSettingsFragment;
+
+import static android.content.Context.DOWNLOAD_SERVICE;
 
 /**
  * Created by Lukas on 12.04.2017.
  */
 
-public class UpdateManager {
+public class UpdateManager extends AsyncTask<String, Void, Boolean> {
 
-    String url = "https://www.dropbox.com/s/iwal8w8h531kcn7/test.txt?dl=1";
+    final String versionURL = "https://www.dropbox.com/s/vmpwripb1pgwllg/version.txt?dl=1";
+    final String appURL = "https://www.dropbox.com/s/evlig9jo46u6vjr/Wann%20ist%20Feierabend.apk?dl=1";
     MainSettingsFragment settingsFragment;
-    SharedPreferences sp;
-    boolean init = false;
+    String fetchedVersion;
+    String thisVersion;
 
-    public UpdateManager(MainSettingsFragment sf) {
+
+    public UpdateManager(MainSettingsFragment sf){
         this.settingsFragment = sf;
-        sp = sf.getPreferenceManager().getSharedPreferences();
+        try {
+            thisVersion = sf.getActivity().getPackageManager().getPackageInfo("de.lukas.wannistfeierabend",0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    public UpdateManager(MainSettingsFragment sf, boolean initial) {
-        this.settingsFragment = sf;
-        init = initial;
-        sp = sf.getPreferenceManager().getSharedPreferences();
-
+    public void getUpdate(String newVersion) {
+        this.execute(newVersion);
     }
 
     public void checkForUpdate() {
-        new MyVersionChecker(this, url, init);
+        new MyVersionChecker(this, versionURL);
     }
 
     public void setFetchedVersion(String fetchedVersion) {
-        sp = settingsFragment.getPreferenceManager().getSharedPreferences();
-        if (fetchedVersion.startsWith("init_")) {
-            sp.edit().putString("key_version", fetchedVersion).apply();
-            settingsFragment.findPreference("key_version").setSummary(fetchedVersion);
-        } else {
-            compareVersions(fetchedVersion);
-        }
+        this.fetchedVersion = fetchedVersion;
+        compareVersions();
     }
 
-    private void compareVersions(String fetchedVersion) {
-        sp = settingsFragment.getPreferenceManager().getSharedPreferences();
-        Log.d("key_version", sp.getString("key_version", "default"));
-        if (fetchedVersion.equals(sp.getString("key_version", "version_0.0"))) {
+    private void compareVersions() {
+        Log.d("this version", thisVersion);
+        if (fetchedVersion.equals(thisVersion)) {
             Log.d("update", "no update");
             settingsFragment.noUpdate();
         } else {
-            sp.edit().putString("key_version", fetchedVersion).apply();
-            Log.d("update", "got update");
             settingsFragment.updateFound(fetchedVersion);
         }
     }
+
+    @Override
+    protected Boolean doInBackground(String... strings) {
+
+        DownloadManager.Request r = new DownloadManager.Request(Uri.parse(appURL));
+        // This put the download in the same Download dir the browser uses
+        r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Wann ist Feierabend " + strings[0]);
+        // Notify user when download is completed
+        // (Seems to be available since Honeycomb only)
+        r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+        if (ContextCompat.checkSelfPermission(settingsFragment.getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        // Start download
+        DownloadManager dm = (DownloadManager) settingsFragment.getActivity().getSystemService(DOWNLOAD_SERVICE);
+        dm.enqueue(r);
+        return true;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
+        if (!aBoolean){
+            settingsFragment.showNoPermissionDialog();
+        }
+    }
+
 }

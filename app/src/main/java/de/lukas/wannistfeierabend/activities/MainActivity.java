@@ -2,6 +2,7 @@ package de.lukas.wannistfeierabend.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,12 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.fragments.PercentFragment;
 import de.lukas.wannistfeierabend.fragments.TimeFragment;
 
 public class MainActivity extends AppCompatActivity{
+    boolean canExit;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -84,6 +87,27 @@ public class MainActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * If the user is on the Main Screen and double taps the
+     * back button in 2 seconds the app closes.
+     */
+    @Override
+    public void onBackPressed() {
+        if (canExit) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(MainActivity.this,getResources().getString(R.string.message_on_back_press), Toast.LENGTH_SHORT).show();
+            canExit = true;
+            Handler onBackPressHandler = new Handler();
+            onBackPressHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    canExit = false;
+                }
+            }, 2000);
+        }
+
+    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

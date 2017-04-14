@@ -16,13 +16,10 @@ import java.net.URL;
 public class MyVersionChecker extends AsyncTask<String,Void,String>{
     UpdateManager um;
 
-    public MyVersionChecker(UpdateManager um, String url, boolean initial){
+    public MyVersionChecker(UpdateManager um, String url){
         this.um = um;
-        if (initial){
-            this.execute(url,"true");
-        }else{
-            this.execute(url,"false");
-        }
+        this.execute(url);
+
     }
     @Override
     protected String doInBackground(String... strings) {
@@ -31,8 +28,7 @@ public class MyVersionChecker extends AsyncTask<String,Void,String>{
             URL url = new URL(strings[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            if (strings[1].equals("true")) return "init_" + readStream(in);
-            else return readStream(in);
+            return readStream(in);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

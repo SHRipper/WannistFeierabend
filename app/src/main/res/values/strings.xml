@@ -12,7 +12,13 @@
 
     <!-- Download link -->
     <string name="dropbox_download_link">https://www.dropbox.com/s/evlig9jo46u6vjr/Wann%20ist%20Feierabend.apk?dl=1</string>
+
     <!-- Error messages -->
     <string name="error_de_end_before_start">Die Änderung wurde nicht übernommen,
         da die Endzeit vor der Startzeit liegt</string>
+
+    <!-- Information messages -->
+    <string name="message_on_back_press">Zum Beenden noch einmal drücken.</string>
+    <!-- Version information -->
+    <string name="version_name">version_0.1</string>
 </resources>

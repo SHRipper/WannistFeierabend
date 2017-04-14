@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.core.MyAlarmManger;
 
 public class SettingsActivity extends AppCompatActivity {
 

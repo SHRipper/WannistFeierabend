@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#757575</color>
+    <color name="colorPrimary">#333333</color>
     <color name="colorPrimaryBackground">#F5F5F5</color>
     <color name="colorCardView">#e6e6e6</color>
     <color name="colorSeperator">#cccccc</color>
-    <color name="colorPrimaryDark">#616161</color>
-    <color name="colorAccent">#FF5722</color>
+    <color name="colorPrimaryDark">#262626</color>
+    <color name="colorAccent">#e62e00</color>
     <color name="primary_text_color">#212121</color>
     <color name="textColorPrimary">#ffffff</color>
     <color name="progress_arc_background">#E0E0E0</color>
