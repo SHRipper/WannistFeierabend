@@ -3,6 +3,7 @@ package de.lukas.wannistfeierabend.fragments;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ import de.lukas.wannistfeierabend.util.TimeManager;
  * Created by Lukas on 05.10.2016.
  */
 
-public class TimeFragment extends Fragment {
+public class TimeFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener{
     TextView txtPassed, txtRemaining, txtPassedHeader, txtRemainingHeader;
     Handler handler = new Handler();
     TimeManager tm;
@@ -72,13 +73,17 @@ public class TimeFragment extends Fragment {
         txtPassedHeader = (TextView) view.findViewById(R.id.txtPassedHeader);
         txtRemainingHeader = (TextView) view.findViewById(R.id.txtRemainingHeader);
 
+        updateHeaders();
+
+        setTimer();
+        return view;
+    }
+
+    private void updateHeaders(){
         tm = new TimeManager(getActivity());
         String times[] = tm.getClockTimesforToday();
         txtPassedHeader.setText("Vergangene Zeit seit " + times[0] + " Uhr");
         txtRemainingHeader.setText("Verbleibende Zeit bis " + times[1] + " Uhr");
-
-        setTimer();
-        return view;
     }
 
     private void startHandler() {
@@ -105,4 +110,11 @@ public class TimeFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.startsWith("key_time_")){
+            updateHeaders();
+        }
+    }
 }

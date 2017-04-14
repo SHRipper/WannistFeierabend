@@ -13,14 +13,15 @@ import java.net.URL;
  * Created by Lukas on 12.04.2017.
  */
 
-public class MyVersionChecker extends AsyncTask<String,Void,String>{
+public class MyVersionChecker extends AsyncTask<String, Void, String> {
     UpdateManager um;
 
-    public MyVersionChecker(UpdateManager um, String url){
+    public MyVersionChecker(UpdateManager um, String url) {
         this.um = um;
         this.execute(url);
 
     }
+
     @Override
     protected String doInBackground(String... strings) {
         HttpURLConnection urlConnection = null;
@@ -44,7 +45,7 @@ public class MyVersionChecker extends AsyncTask<String,Void,String>{
         String s = "";
 
         try {
-            while ((c=(char)in.read()) != ';'){
+            while ((c = (char) in.read()) != ';') {
                 s += c;
             }
         } catch (IOException e) {

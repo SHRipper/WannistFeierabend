@@ -13,24 +13,30 @@ import java.util.TimeZone;
  */
 
 public class TimeManager {
+
     Calendar c = Calendar.getInstance();
     SharedPreferences sharedPreferences;
+
     public TimeManager(Context context){
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         c.setTimeZone(TimeZone.getDefault());
     }
+
     public int getTimePeriodDone(){
         c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
         int startTime = getTimeInMinutesForToday()[0];
         return (c.get(Calendar.HOUR_OF_DAY)*60 + c.get(Calendar.MINUTE)) - startTime;
     }
+
     public String getRemainingTime(){
         return getPassedAndRemainingTime()[1];
     }
+
     public String getPassedTime(){
         return getPassedAndRemainingTime()[0];
     }
+
     private String[] getPassedAndRemainingTime(){
         c = Calendar.getInstance();
         String s[] = new String[2];
@@ -67,6 +73,7 @@ public class TimeManager {
 
         return s;
     }
+
     public int getTimePeriodMinutes(int startTime, int endTime){
         return endTime - startTime;
     }
@@ -76,6 +83,7 @@ public class TimeManager {
         // endtime minus starttime
         return i[1] - i[0];
     }
+
     public int[] getTimeInMinutesForToday() {
         String time = sharedPreferences.getString(getWeekdayKey(), "8:00 - 13:00");
         return splitTimeStringToTimesInMinutes(time);
@@ -91,6 +99,7 @@ public class TimeManager {
         }
         return s;
     }
+
     private int[] splitTimeStringToTimesInMinutes(String t){
         String time[] = t.split(" - ");
         String startTime = time[0];

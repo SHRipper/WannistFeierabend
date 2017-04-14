@@ -22,25 +22,21 @@ public class MyAlarmManger {
     private static PendingIntent pendingIntent25,pendingIntent50,pendingIntent75;
     private static Intent alarmIntent25, alarmIntent50, alarmIntent75;
     private static SharedPreferences sharedPreferences;
+    private static Context context;
 
-    public static void setAlarmManager(Context context) {
+    public static void setAlarmManager(Context c) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        alarmIntent25 = new Intent(context.getApplicationContext(), AlarmReceiver.class);
-        alarmIntent25.putExtra("id",25);
-        alarmIntent50 = new Intent(context.getApplicationContext(), AlarmReceiver.class);
-        alarmIntent50.putExtra("id",50);
-        alarmIntent75 = new Intent(context.getApplicationContext(), AlarmReceiver.class);
-        alarmIntent75.putExtra("id",75);
+        context = c;
         alarmManager = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         Log.d("InitAlarmManager", "initializing alarm manager");
 
-        boolean notif25 = sharedPreferences.getBoolean("key_notification_25",false);
-        boolean notif50 = sharedPreferences.getBoolean("key_notification_50",false);
-        boolean notif75 = sharedPreferences.getBoolean("key_notification_75",false);
+    }
 
+    private void setNotification25(){
+        alarmIntent25 = new Intent(context.getApplicationContext(), AlarmReceiver.class);
+        alarmIntent25.putExtra("id",25);
+        boolean notif25 = sharedPreferences.getBoolean("key_notification_25",false);
         boolean alarm25AlreadySet = (PendingIntent.getBroadcast(context.getApplicationContext(), 25, alarmIntent25, PendingIntent.FLAG_NO_CREATE) != null);
-        boolean alarm50AlreadySet = (PendingIntent.getBroadcast(context.getApplicationContext(), 50, alarmIntent50, PendingIntent.FLAG_NO_CREATE) != null);
-        boolean alarm75AlreadySet = (PendingIntent.getBroadcast(context.getApplicationContext(), 75, alarmIntent75, PendingIntent.FLAG_NO_CREATE) != null);
 
         if (!alarm25AlreadySet && notif25) {
             Log.d("InitAlarmManager", "alarm for 25% was not set before. Setting 25% alarm");
@@ -50,31 +46,55 @@ public class MyAlarmManger {
         } else {
             Log.d("InitAlarmManager", "alarm for 25% was set before. do nothing.");
         }
+    }
+
+    private void setNotification50(){
+        alarmIntent50 = new Intent(context.getApplicationContext(), AlarmReceiver.class);
+        alarmIntent50.putExtra("id",50);
+        boolean notif50 = sharedPreferences.getBoolean("key_notification_50",false);
+        boolean alarm50AlreadySet = (PendingIntent.getBroadcast(context.getApplicationContext(), 50, alarmIntent50, PendingIntent.FLAG_NO_CREATE) != null);
 
         if (!alarm50AlreadySet && notif50) {
             Log.d("InitAlarmManager", "alarm for 50% was not set before. Setting 50% alarm");
             pendingIntent50 = PendingIntent.getBroadcast(context.getApplicationContext(), 50, alarmIntent50, 0);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, getNextAlarmMillis(context,25),pendingIntent75);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, getNextAlarmMillis(context,50),pendingIntent75);
         } else {
             Log.d("InitAlarmManager", "alarm for 50% was set before. do nothing.");
         }
+    }
+    private void setNotification75(){
+        alarmIntent75 = new Intent(context.getApplicationContext(), AlarmReceiver.class);
+        alarmIntent75.putExtra("id",75);
+        boolean notif75 = sharedPreferences.getBoolean("key_notification_75",false);
+        boolean alarm75AlreadySet = (PendingIntent.getBroadcast(context.getApplicationContext(), 75, alarmIntent75, PendingIntent.FLAG_NO_CREATE) != null);
 
         if (!alarm75AlreadySet && notif75) {
             Log.d("InitAlarmManager", "alarm for 75% was not set before. Setting 75% alarm");
             pendingIntent75 = PendingIntent.getBroadcast(context.getApplicationContext(), 75, alarmIntent75, 0);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, getNextAlarmMillis(context,25),pendingIntent75);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, getNextAlarmMillis(context,75),pendingIntent75);
         } else {
             Log.d("InitAlarmManager", "alarm for 75% was set before. do nothing.");
         }
     }
-
     public static void cancelAlarmManager(Context context) {
-        //int prefID[] =
-        // todo: cancel only the alarm which preferences are false
-        Log.d("InitAlarmManager", "cancelled alarm.");
-        PendingIntent.getBroadcast(context.getApplicationContext(), 25, alarmIntent25, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-        PendingIntent.getBroadcast(context.getApplicationContext(), 50, alarmIntent50, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-        PendingIntent.getBroadcast(context.getApplicationContext(), 75, alarmIntent75, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+        boolean notif75 = sharedPreferences.getBoolean("key_notification_75",false);
+        boolean notif50 = sharedPreferences.getBoolean("key_notification_50",false);
+        boolean notif25 = sharedPreferences.getBoolean("key_notification_25",false);
+
+        if(notif25){
+            PendingIntent.getBroadcast(context.getApplicationContext(), 25, alarmIntent25, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+            Log.d("InitAlarmManager", "cancelled alarm 25%.");
+
+        }
+        if(notif50){
+            PendingIntent.getBroadcast(context.getApplicationContext(), 50, alarmIntent50, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+            Log.d("InitAlarmManager", "cancelled alarm 50%.");
+
+        }
+        if(notif75){
+            PendingIntent.getBroadcast(context.getApplicationContext(), 75, alarmIntent75, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+            Log.d("InitAlarmManager", "cancelled alarm 75%.");
+        }
 
     }
 
