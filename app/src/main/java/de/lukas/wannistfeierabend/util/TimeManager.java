@@ -132,7 +132,7 @@ public class TimeManager {
                 dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
                 break;
             case TOMORROW:
-                dayOfWeek = (c.get(Calendar.DAY_OF_WEEK) + 1)%8;
+                dayOfWeek = (c.get(Calendar.DAY_OF_WEEK) + 1);
                 break;
             case MONDAY:
                 dayOfWeek = Calendar.MONDAY;

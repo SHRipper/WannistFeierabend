@@ -66,15 +66,6 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
-        am = new MyAlarmManger(getActivity());
-        if (!sharedPreferences.getBoolean("key_notifications_enable",false)){
-            // notifications are not enabled -> cancel all alarms
-            am.cancelAllAlarms();
-        }else{
-            // notifications are enabled -> set next alarm
-            am.setNextAlarm();
-        }
     }
 
     public void showNoPermissionDialog(){
@@ -192,14 +183,6 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         }
         if (preference.getKey().equals("key_notifications_enable")) {
             setBooleanSummary(preference, "An", "Aus");
-            /*am = new MyAlarmManger(getActivity());
-            if (!sharedPreferences.getBoolean(preference.getKey(),false)){
-                // notifications are not enabled -> cancel all alarms
-                am.cancelAllAlarms();
-            }else{
-                // notifications are enabled -> set next alarm
-                am.setNextAlarm(0);
-            }*/
         }
         if (preference.getKey().equals("key_saturday_show")){
             setBooleanSummary(preference, "Ja", "Nein");

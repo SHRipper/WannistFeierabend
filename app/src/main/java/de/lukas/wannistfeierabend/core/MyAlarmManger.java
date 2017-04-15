@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.util.Calendar;
 
+import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.receiver.AlarmReceiver;
 import de.lukas.wannistfeierabend.util.TimeManager;
 
@@ -27,12 +28,15 @@ public class MyAlarmManger {
     TimeManager tm;
     Context context;
     Calendar c;
+    String defaultTime;
+
 
 
     public MyAlarmManger(Context context) {
         this.context = context.getApplicationContext();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         tm = new TimeManager(context);
+        defaultTime = context.getResources().getString(R.string.default_time);
 
         Log.d("AlarmManager", "initializing alarm manager");
 
@@ -48,12 +52,6 @@ public class MyAlarmManger {
         notif50 = sharedPreferences.getBoolean("key_notifications_50", false);
         notif75 = sharedPreferences.getBoolean("key_notifications_75", false);
 
-    }
-
-    public void setAllAlarms() {
-        setAlarm25();
-        setAlarm50();
-        setAlarm75();
     }
 
     public void setNextAlarm() {
@@ -159,23 +157,12 @@ public class MyAlarmManger {
     }
 
     public void cancelAllAlarms() {
-
-
-        if (notif25) {
-            PendingIntent.getBroadcast(context, 25, alarmIntent25, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-            Log.d("AlarmManager", "cancelled alarm 25%.");
-
-        }
-        if (notif50) {
-            PendingIntent.getBroadcast(context, 50, alarmIntent50, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-            Log.d("AlarmManager", "cancelled alarm 50%.");
-
-        }
-        if (notif75) {
-            PendingIntent.getBroadcast(context, 75, alarmIntent75, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-            Log.d("AlarmManager", "cancelled alarm 75%.");
-        }
-
+        PendingIntent.getBroadcast(context, 25, alarmIntent25, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+        Log.d("AlarmManager", "cancelled alarm 25%.");
+        PendingIntent.getBroadcast(context, 50, alarmIntent50, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+        Log.d("AlarmManager", "cancelled alarm 50%.");
+        PendingIntent.getBroadcast(context, 75, alarmIntent75, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+        Log.d("AlarmManager", "cancelled alarm 75%.");
     }
 
     private long getNextAlarmMillisForPercent(int percent) {
@@ -189,13 +176,14 @@ public class MyAlarmManger {
         int nextAlarmTimeMinutes = (startTime + (int) ((percent / 100.0) * period));
         c.set(Calendar.HOUR_OF_DAY, (nextAlarmTimeMinutes / 60));
         c.set(Calendar.MINUTE, (nextAlarmTimeMinutes % 60));
+        c.set(Calendar.SECOND,0);
 
         // calculate to make comparison possible
         Log.d("AlarmManager", "triggerTime: " + nextAlarmTimeMinutes / 60 +
                 ":" + nextAlarmTimeMinutes % 60);
         Log.d("AlarmManager", String.format("%d - %d", c.getTimeInMillis(), System.currentTimeMillis()));
 
-        if (c.getTimeInMillis() < System.currentTimeMillis()) {
+        if (c.getTimeInMillis() <= System.currentTimeMillis()) {
             // The alarm time is scheduled in the past. This is a sign that the
             // next alarm time should be on the next possible day.
             long nextAlarmTimeMillis = 0;
@@ -213,6 +201,8 @@ public class MyAlarmManger {
             }
             return nextAlarmTimeMillis;
         }
+        Log.d("AlarmManager", "scheduled time: " + c.getTime());
+
         return c.getTimeInMillis();
     }
 
@@ -224,8 +214,8 @@ public class MyAlarmManger {
      */
     private long setOnMonday(int percent, int dayOfWeek) {
         String key = tm.getWeekdayKeyFor(TimeManager.Day.MONDAY);
-        int times[] = tm.splitTimeStringToTimesInMinutes(sharedPreferences.getString(key, "0:00 - 23:00"));
-
+        int times[] = tm.splitTimeStringToTimesInMinutes(sharedPreferences.getString(key, defaultTime));
+        int period = times[1] - times[0];
         c.setTimeInMillis(System.currentTimeMillis());
 
         if (dayOfWeek == Calendar.FRIDAY) {
@@ -235,8 +225,9 @@ public class MyAlarmManger {
             // dayofweek == Calendar.Saturday
             c.add(Calendar.DAY_OF_MONTH, 2);
         }
-        c.set(Calendar.HOUR_OF_DAY, (times[0] + (int) ((percent / 100.0) * times[0])) / 60);
-        c.set(Calendar.MINUTE, (times[0] + (int) ((percent / 100.0) * times[0])) % 60);
+        c.set(Calendar.HOUR_OF_DAY, (times[0] + (int) ((percent / 100.0) * period)) / 60);
+        c.set(Calendar.MINUTE, (times[0] + (int) ((percent / 100.0) * period)) % 60);
+        c.set(Calendar.SECOND,0);
 
         Log.d("AlarmManager", "time set monday: " + c.getTime());
         return c.getTimeInMillis();
@@ -244,12 +235,14 @@ public class MyAlarmManger {
 
     private long setTomorrow(int percent) {
         String key = tm.getWeekdayKeyFor(TimeManager.Day.TOMORROW);
-        int times[] = tm.splitTimeStringToTimesInMinutes(sharedPreferences.getString(key, "0:00 - 23:00"));
+        int times[] = tm.splitTimeStringToTimesInMinutes(sharedPreferences.getString(key, defaultTime));
+        int period = times[1] - times[0];
 
         c.setTimeInMillis(System.currentTimeMillis());
-        c.set(Calendar.HOUR_OF_DAY, (times[0] + (int) ((percent / 100.0) * times[0])) / 60);
-        c.set(Calendar.MINUTE, (times[0] + (int) ((percent / 100.0) * times[0])) % 60);
         c.add(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR_OF_DAY, (times[0] + (int) ((percent / 100.0) * period)) / 60);
+        c.set(Calendar.MINUTE, (times[0] + (int) ((percent / 100.0) * period)) % 60);
+        c.set(Calendar.SECOND,0);
 
         Log.d("AlarmManager", "time set tomorrow: " + c.getTime());
         return c.getTimeInMillis();

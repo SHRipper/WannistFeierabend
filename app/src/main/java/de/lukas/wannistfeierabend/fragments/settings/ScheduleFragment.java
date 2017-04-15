@@ -13,12 +13,14 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.core.MyAlarmManger;
 import de.lukas.wannistfeierabend.core.TimeIntervalPreferenceDialog;
+import de.lukas.wannistfeierabend.util.TimeManager;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ScheduleFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
+public class ScheduleFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
     SharedPreferences sharedPreferences;
     Context context;
@@ -56,16 +58,17 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
         prefFriday.setOnPreferenceClickListener(this);
         prefSaturday = findPreference("key_time_saturday");
 
-        if (sharedPreferences.getBoolean("key_saturday_show",false)){
+        if (sharedPreferences.getBoolean("key_saturday_show", false)) {
             prefSaturday.setOnPreferenceClickListener(this);
             prefSaturday.setEnabled(true);
-        }else{
+        } else {
             prefSaturday.setEnabled(false);
         }
 
         setPrefSummaries();
     }
-    private void setPrefSummaries(){
+
+    private void setPrefSummaries() {
         String DEFAULT = getString(R.string.default_time);
         prefMonday.setSummary(sharedPreferences.getString("key_time_monday", DEFAULT));
         prefTuesday.setSummary(sharedPreferences.getString("key_time_tuesday", DEFAULT));
@@ -77,8 +80,14 @@ public class ScheduleFragment extends PreferenceFragment implements Preference.O
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        new TimeIntervalPreferenceDialog(preference,context).showDialog();
+        new TimeIntervalPreferenceDialog(preference, context).showDialog();
+
+        TimeManager tm = new TimeManager(getActivity());
+        if (tm.getWeekdayKeyFor(TimeManager.Day.TODAY).equals(preference.getKey())) {
+            MyAlarmManger am = new MyAlarmManger(getActivity());
+            am.cancelAllAlarms();
+            am.setNextAlarm();
+        }
         return true;
     }
-
 }

@@ -151,8 +151,8 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
 
     @Override
     public void onClick(View view) {
-        Log.d("PercentFragment", "Reset FAB clicked.");
-        // FAB onClick to refresh the animation process
+        Log.d("PercentFragment", "Share FAB clicked.");
+
         String message = "Ich habe schon\n*" + progressDone + "%*\ndes Tages geschafft!";
         if (sharedPreferences.getBoolean("key_downloadlink_show",false)){
             message += "\n\nJetzt die App herunterladen: "
