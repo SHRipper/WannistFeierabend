@@ -22,9 +22,11 @@ public class MyAlarmManger {
     AlarmManager alarmManager;
     PendingIntent pendingIntent25, pendingIntent50, pendingIntent75;
     Intent alarmIntent25, alarmIntent50, alarmIntent75;
+    boolean notif25, notif50, notif75;
     SharedPreferences sharedPreferences;
     TimeManager tm;
     Context context;
+    Calendar c;
 
 
     public MyAlarmManger(Context context) {
@@ -32,7 +34,7 @@ public class MyAlarmManger {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         tm = new TimeManager(context);
 
-        Log.d("InitAlarmManager", "initializing alarm manager");
+        Log.d("AlarmManager", "initializing alarm manager");
 
         alarmManager = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         alarmIntent25 = new Intent(context, AlarmReceiver.class);
@@ -41,6 +43,11 @@ public class MyAlarmManger {
         alarmIntent50.putExtra("id", 50);
         alarmIntent75 = new Intent(context, AlarmReceiver.class);
         alarmIntent75.putExtra("id", 75);
+
+        notif25 = sharedPreferences.getBoolean("key_notifications_25", false);
+        notif50 = sharedPreferences.getBoolean("key_notifications_50", false);
+        notif75 = sharedPreferences.getBoolean("key_notifications_75", false);
+
     }
 
     public void setAllAlarms() {
@@ -49,70 +56,87 @@ public class MyAlarmManger {
         setAlarm75();
     }
 
-    public void setNextAlarm(int currentNotificationID){
-        switch (currentNotificationID){
-            case 25:
-                setAlarm50();
-                break;
-            case 50:
-                setAlarm75();
-                break;
-            case 75:
-                setAlarm25();
-                break;
-            case 0:
-                Log.d("MyAlarmManager", "find next alarm to set");
-                setNextAlarm(findNotificationID());
-            default:
-                Log.wtf("MyAlarmManager","wtf have you done");
-        }
-    }
-
-    /**
-     * Returns the Notification id that should have been
-     * fired before from the percentage done.
-     * @return
-     */
-    private int findNotificationID(){
+    public void setNextAlarm() {
         int percent = tm.getPercentDone();
-        Log.d("MyAlarmManger", "percent done: " + percent);
-        if (percent >= 25 && percent < 50){
-            // percent is betweed 25 and 49 -> the last notification should have been 25.
-            return 25;
+        Log.d("AlarmManager", "percent done: " + percent);
+
+        if (notif25 && notif50 && notif75) {
+            if (percent >= 25 && percent < 50) {
+                setAlarm50();
+                return;
+            } else if (percent >= 50 && percent < 75) {
+                setAlarm75();
+                return;
+            } else {
+                setAlarm25();
+                return;
+            }
         }
-        else if (percent >= 50 && percent < 75){
-            return 50;
+        if (notif25 && notif50) {
+            if (percent >= 25 && percent < 50) {
+                setAlarm50();
+                return;
+            } else {
+                setAlarm25();
+                return;
+            }
         }
-        else {
-            //percent >= 75 or percent < 25
-            return 75;
+        if (notif50 && notif75) {
+
+            if (percent >= 50 && percent < 75) {
+                setAlarm75();
+                return;
+            } else {
+                setAlarm50();
+                return;
+            }
         }
+        if (notif25 && notif75) {
+            if (percent >= 25 && percent < 75) {
+                setAlarm75();
+                return;
+            } else {
+                setAlarm25();
+                return;
+            }
+        }
+
+        if (notif25) setAlarm25();
+        if (notif50) setAlarm50();
+        if (notif75) setAlarm75();
+
     }
 
     public void setAlarm25() {
-        boolean notif25 = sharedPreferences.getBoolean("key_notifications_25", false);
         boolean alarm25AlreadySet = (PendingIntent.getBroadcast(context, 25, alarmIntent25, PendingIntent.FLAG_NO_CREATE) != null);
 
         if (!alarm25AlreadySet && notif25) {
-            Log.d("InitAlarmManager", "alarm for 25% was not set before. Setting 25% alarm");
+            Log.d("AlarmManager", "alarm for 25% was not set before. Setting 25% alarm");
             pendingIntent25 = PendingIntent.getBroadcast(context, 25, alarmIntent25, 0);
             alarmManager.set(AlarmManager.RTC_WAKEUP, getNextAlarmMillisForPercent(25), pendingIntent25);
         } else {
-            Log.d("InitAlarmManager", "alarm for 25% was set before. do nothing.");
+            if (!notif25) {
+                Log.d("AlarmManager", "nofification for 25% is not enabled");
+            } else if (alarm25AlreadySet) {
+                Log.d("AlarmManager", "alarm for 25% was set before.");
+            }
         }
     }
 
     public void setAlarm50() {
 
-        boolean notif50 = sharedPreferences.getBoolean("key_notifications_50", false);
         boolean alarm50AlreadySet = (PendingIntent.getBroadcast(context, 50, alarmIntent50, PendingIntent.FLAG_NO_CREATE) != null);
 
         if (!alarm50AlreadySet && notif50) {
-            Log.d("InitAlarmManager", "setting 50% alarm");
+            Log.d("AlarmManager", "setting 50% alarm");
             pendingIntent50 = PendingIntent.getBroadcast(context, 50, alarmIntent50, 0);
             alarmManager.set(AlarmManager.RTC_WAKEUP, getNextAlarmMillisForPercent(50), pendingIntent50);
         } else {
-            Log.d("InitAlarmManager", "alarm for 50% not set. setBefore? " + alarm50AlreadySet + " ; 50 enabled? " + notif50);
+            if (!notif50) {
+                Log.d("AlarmManager", "nofification for 50% is not enabled");
+            } else if (alarm50AlreadySet) {
+                Log.d("AlarmManager", "alarm for 50% was set before.");
+            }
         }
     }
 
@@ -122,32 +146,34 @@ public class MyAlarmManger {
         boolean alarm75AlreadySet = (PendingIntent.getBroadcast(context, 75, alarmIntent75, PendingIntent.FLAG_NO_CREATE) != null);
 
         if (!alarm75AlreadySet && notif75) {
-            Log.d("InitAlarmManager", "alarm for 75% was not set before. Setting 75% alarm");
+            Log.d("AlarmManager", "alarm for 75% was not set before. Setting 75% alarm");
             pendingIntent75 = PendingIntent.getBroadcast(context, 75, alarmIntent75, 0);
             alarmManager.set(AlarmManager.RTC_WAKEUP, getNextAlarmMillisForPercent(75), pendingIntent75);
         } else {
-            Log.d("InitAlarmManager", "alarm for 75% was set before. do nothing.");
+            if (!notif75) {
+                Log.d("AlarmManager", "nofification for 75% is not enabled");
+            } else if (alarm75AlreadySet) {
+                Log.d("AlarmManager", "alarm for 75% was set before.");
+            }
         }
     }
 
     public void cancelAllAlarms() {
-        boolean notif75 = sharedPreferences.getBoolean("key_notifications_75", false);
-        boolean notif50 = sharedPreferences.getBoolean("key_notifications_50", false);
-        boolean notif25 = sharedPreferences.getBoolean("key_notifications_25", false);
+
 
         if (notif25) {
             PendingIntent.getBroadcast(context, 25, alarmIntent25, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-            Log.d("InitAlarmManager", "cancelled alarm 25%.");
+            Log.d("AlarmManager", "cancelled alarm 25%.");
 
         }
         if (notif50) {
             PendingIntent.getBroadcast(context, 50, alarmIntent50, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-            Log.d("InitAlarmManager", "cancelled alarm 50%.");
+            Log.d("AlarmManager", "cancelled alarm 50%.");
 
         }
         if (notif75) {
             PendingIntent.getBroadcast(context, 75, alarmIntent75, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
-            Log.d("InitAlarmManager", "cancelled alarm 75%.");
+            Log.d("AlarmManager", "cancelled alarm 75%.");
         }
 
     }
@@ -156,46 +182,78 @@ public class MyAlarmManger {
         int times[] = tm.getTimeInMinutesForToday();
         int startTime = times[0];
         int period = tm.getTotalPeriodForToday();
-        boolean showSaturday = sharedPreferences.getBoolean("key_saturday_show",false);
-        Calendar c = Calendar.getInstance();
+        boolean showSaturday = sharedPreferences.getBoolean("key_saturday_show", false);
+        c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
 
-        long nextAlarmTimeMillis = (startTime + (percent/100) * period)*60*1000;
+        int nextAlarmTimeMinutes = (startTime + (int) ((percent / 100.0) * period));
+        c.set(Calendar.HOUR_OF_DAY, (nextAlarmTimeMinutes / 60));
+        c.set(Calendar.MINUTE, (nextAlarmTimeMinutes % 60));
 
-        Log.d("InitAlarmManager", "triggerTime: " + nextAlarmTimeMillis/(3600*1000) +
-                ":" + (nextAlarmTimeMillis/(60*1000))%60);
+        // calculate to make comparison possible
+        Log.d("AlarmManager", "triggerTime: " + nextAlarmTimeMinutes / 60 +
+                ":" + nextAlarmTimeMinutes % 60);
+        Log.d("AlarmManager", String.format("%d - %d", c.getTimeInMillis(), System.currentTimeMillis()));
 
-        if(nextAlarmTimeMillis < System.currentTimeMillis()){
+        if (c.getTimeInMillis() < System.currentTimeMillis()) {
             // The alarm time is scheduled in the past. This is a sign that the
             // next alarm time should be on the next possible day.
+            long nextAlarmTimeMillis = 0;
             if (c.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY && !showSaturday
-                    || c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
+                    || c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
                 // The alarm is scheduled on monday on following occasions
                 // - it is friday and saturday is not enabled
                 // - it is saturday
-                nextAlarmTimeMillis = setOnMonday(percent);
-            }else{
+                nextAlarmTimeMillis = setOnMonday(percent, c.get(Calendar.DAY_OF_WEEK));
+            } else {
                 // The alarm is scheduled on the next day on following occasions
                 // - it is Monday - Thursday
                 // - it is Friday with Saturday being enabled
                 nextAlarmTimeMillis = setTomorrow(percent);
             }
+            return nextAlarmTimeMillis;
         }
-
-        return nextAlarmTimeMillis;
+        return c.getTimeInMillis();
     }
 
     /**
      * Set the alarm on monday to the time calculated from the percent value.
+     *
      * @param percent
      * @return
      */
-    private long setOnMonday(int percent){
+    private long setOnMonday(int percent, int dayOfWeek) {
+        String key = tm.getWeekdayKeyFor(TimeManager.Day.MONDAY);
+        int times[] = tm.splitTimeStringToTimesInMinutes(sharedPreferences.getString(key, "0:00 - 23:00"));
 
+        c.setTimeInMillis(System.currentTimeMillis());
+
+        if (dayOfWeek == Calendar.FRIDAY) {
+            // friday + 3 is monday
+            c.add(Calendar.DAY_OF_MONTH, 3);
+        } else {
+            // dayofweek == Calendar.Saturday
+            c.add(Calendar.DAY_OF_MONTH, 2);
+        }
+        c.set(Calendar.HOUR_OF_DAY, (times[0] + (int) ((percent / 100.0) * times[0])) / 60);
+        c.set(Calendar.MINUTE, (times[0] + (int) ((percent / 100.0) * times[0])) % 60);
+
+        Log.d("AlarmManager", "time set monday: " + c.getTime());
+        return c.getTimeInMillis();
     }
 
-    private long setTomorrow(int percent){
+    private long setTomorrow(int percent) {
+        String key = tm.getWeekdayKeyFor(TimeManager.Day.TOMORROW);
+        int times[] = tm.splitTimeStringToTimesInMinutes(sharedPreferences.getString(key, "0:00 - 23:00"));
 
+        c.setTimeInMillis(System.currentTimeMillis());
+        c.set(Calendar.HOUR_OF_DAY, (times[0] + (int) ((percent / 100.0) * times[0])) / 60);
+        c.set(Calendar.MINUTE, (times[0] + (int) ((percent / 100.0) * times[0])) % 60);
+        c.add(Calendar.DAY_OF_MONTH, 1);
+
+        Log.d("AlarmManager", "time set tomorrow: " + c.getTime());
+        return c.getTimeInMillis();
     }
+
 
 }

@@ -96,9 +96,10 @@ public class TimeManager {
     }
 
     public int[] getTimeInMinutesForToday() {
-        String time = sharedPreferences.getString(getWeekdayKey(), "8:00 - 13:00");
+        String time = sharedPreferences.getString(getWeekdayKeyFor(Day.TODAY), "8:00 - 13:00");
         return splitTimeStringToTimesInMinutes(time);
     }
+
     public String[] getClockTimesforToday(){
         int times[] = getTimeInMinutesForToday();
         String s[] = new String[2];
@@ -111,7 +112,7 @@ public class TimeManager {
         return s;
     }
 
-    private int[] splitTimeStringToTimesInMinutes(String t){
+    public int[] splitTimeStringToTimesInMinutes(String t){
         String time[] = t.split(" - ");
         String startTime = time[0];
         String endTime = time[1];
@@ -124,8 +125,20 @@ public class TimeManager {
         return times;
     }
 
-    private String getWeekdayKey() {
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+    public String getWeekdayKeyFor(Day day) {
+        int dayOfWeek = 0;
+        switch (day){
+            case TODAY:
+                dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                break;
+            case TOMORROW:
+                dayOfWeek = (c.get(Calendar.DAY_OF_WEEK) + 1)%8;
+                break;
+            case MONDAY:
+                dayOfWeek = Calendar.MONDAY;
+                break;
+        }
+
         Log.d("TimeManger", "Day index" + dayOfWeek);
 
         String weekdays[] = {"key_time_monday", "key_time_tuesday",
@@ -139,6 +152,10 @@ public class TimeManager {
         return weekdays[dayOfWeek - 2];
     }
 
-
+    public enum Day{
+        TODAY,
+        TOMORROW,
+        MONDAY
+    }
 }
 

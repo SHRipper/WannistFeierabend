@@ -120,9 +120,6 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
         return progressDone * 10;
     }
 
-
-
-
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

@@ -31,7 +31,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         notificationManager.notify(1, buildNotification(context,percent));
 
         MyAlarmManger am = new MyAlarmManger(context);
-        am.setNextAlarm(0);
+        am.setNextAlarm();
     }
 
     private Notification buildNotification(Context context, int percent){

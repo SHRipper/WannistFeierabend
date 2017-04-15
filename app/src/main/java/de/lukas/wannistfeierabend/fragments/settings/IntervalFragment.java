@@ -35,9 +35,9 @@ public class IntervalFragment extends PreferenceFragment implements OnPreference
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        MyAlarmManger am = new MyAlarmManger(getActivity());
+        /*MyAlarmManger am = new MyAlarmManger(getActivity());
         am.cancelAllAlarms();
-        am.setNextAlarm(0);
+        am.setNextAlarm(0);*/
         return true;
     }
 }
