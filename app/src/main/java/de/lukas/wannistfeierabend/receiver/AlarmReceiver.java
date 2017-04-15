@@ -42,7 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle("Feierabend?");
         builder.setContentText(percent + "% geschafft!");
-        builder.setSmallIcon(R.drawable.clock_alert_24dp);
+        builder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
         builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
         builder.setContentIntent(pendingIntent);
         builder.setDefaults(Notification.DEFAULT_ALL);
