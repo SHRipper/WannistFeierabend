@@ -19,6 +19,10 @@
 
     <!-- Information messages -->
     <string name="message_on_back_press">Zum Beenden noch einmal drücken.</string>
-    <!-- Version information -->
-    <string name="version_name">version_0.1</string>
+
+    <string-array name="update_interval_entries">
+        <item>Täglich</item>
+        <item>Wöchentlich</item>
+    </string-array>
+    <string name="update_interval_default">Täglich</string>
 </resources>

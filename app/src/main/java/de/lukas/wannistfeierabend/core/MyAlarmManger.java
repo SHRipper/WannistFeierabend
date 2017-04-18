@@ -30,8 +30,6 @@ public class MyAlarmManger {
     Calendar c;
     String defaultTime;
 
-
-
     public MyAlarmManger(Context context) {
         this.context = context.getApplicationContext();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -53,6 +51,8 @@ public class MyAlarmManger {
         notif75 = sharedPreferences.getBoolean("key_notifications_75", false);
 
     }
+
+
 
     public void setNextAlarm() {
         int percent = tm.getPercentDone();
@@ -247,6 +247,5 @@ public class MyAlarmManger {
         Log.d("AlarmManager", "time set tomorrow: " + c.getTime());
         return c.getTimeInMillis();
     }
-
 
 }

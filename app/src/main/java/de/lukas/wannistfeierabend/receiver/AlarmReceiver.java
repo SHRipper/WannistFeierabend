@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -38,8 +39,23 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private Notification buildNotification(Context context, int percent){
         Intent intent = new Intent(context, MainActivity.class);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String message = "Ich habe schon\n*" + percent + "%*\ndes Tages geschafft!";
+        if (sharedPreferences.getBoolean("key_downloadlink_show",false)){
+            message += "\n\nJetzt die App herunterladen: "
+                    + context.getResources().getString(R.string.dropbox_download_link);
+        }
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setPackage("com.whatsapp");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType("text/plain");
+
+        //todo: share does not share to whatsapp maybe update current is the problem
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent shareIntent = PendingIntent.getActivity(context,1,sendIntent,PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle("Feierabend?");
@@ -48,10 +64,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
         builder.setContentIntent(pendingIntent);
         builder.setDefaults(Notification.DEFAULT_ALL);
-        //builder.addAction(R.drawable.icon_share_24dp, "Auf Whatsapp teilen",sendIntent);
+        builder.addAction(R.drawable.icon_share_24dp, "Teilen" ,shareIntent);
         builder.setAutoCancel(true);
         builder.setOnlyAlertOnce(true);
-
         return builder.build();
     }
 }

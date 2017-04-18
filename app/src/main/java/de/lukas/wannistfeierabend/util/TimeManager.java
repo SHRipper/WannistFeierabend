@@ -143,7 +143,7 @@ public class TimeManager {
 
         String weekdays[] = {"key_time_monday", "key_time_tuesday",
                 "key_time_wednesday", "key_time_thursday", "key_time_friday","key_time_saturday"};
-        int max = sharedPreferences.getBoolean("key_time_saturday",false) ? 7 : 6;
+        int max = sharedPreferences.getBoolean("key_saturday_show",false) ? 7 : 6;
         // sunday is 1 and saturday is 7, monday = 2 to friday = 6
         if (dayOfWeek > max || dayOfWeek == 1) {
             return "none";
