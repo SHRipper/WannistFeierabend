@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import java.util.Calendar;
 
@@ -34,9 +35,11 @@ public class UpdateAlarmManager extends MyAlarmManger {
         }
 
         updateIntent = PendingIntent.getBroadcast(context, 101, updateAlarmIntent, 0);
-        alarmManager.setInexactRepeating(AlarmManager.RTC, setTomorrow(18,0),
-                interval,updateIntent);
+        //alarmManager.setInexactRepeating(AlarmManager.RTC, setTomorrow(18,0),
+        //        interval,updateIntent);
 
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 30000,updateIntent);
+        Log.d("UpdateAlarmManager","set alarm in 30 sec");
     }
 
     public void cancelUpdateAlarm(){

@@ -19,10 +19,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import de.lukas.wannistfeierabend.R;
+import de.lukas.wannistfeierabend.core.DownloadListener;
 import de.lukas.wannistfeierabend.core.MyAlarmManger;
+import de.lukas.wannistfeierabend.core.UpdateAlarmManager;
 import de.lukas.wannistfeierabend.core.UpdateManager;
 
-public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, FragmentManager.OnBackStackChangedListener{
+public class MainSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
+        FragmentManager.OnBackStackChangedListener,
+        DownloadListener{
 
     Context context;
     SharedPreferences sharedPreferences;
@@ -59,22 +63,13 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
         getStorageWritePermission();
 
-        um = new UpdateManager(this);
+        um = new UpdateManager(this,getActivity());
         try {
             PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo("de.lukas.wannistfeierabend", 0);
             findPreference("key_version").setSummary("version_" + packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public void showNoPermissionDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Fehlende Berechtigung!\nDie App muss auf das Dateisystem zugreifen können.\nÄndere dies in den Einstellungen um Updates zu erhalten.")
-                .setIcon(R.mipmap.ic_launcher)
-                .setPositiveButton("Ok",null)
-                .create()
-                .show();
     }
 
     private void getStorageWritePermission(){
@@ -101,13 +96,14 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             }
         }
     }
-    public void noUpdate(){
-        Toast.makeText(getActivity(),"Die App ist auf dem neuesten Stand.",Toast.LENGTH_SHORT).show();
-        progressDialog.cancel();
-    }
 
-    public void updateFound(final String newVersion){
+    @Override
+    public void onFinishedSuccess(final String newVersion) {
         progressDialog.cancel();
+        if (newVersion.equals("")) {
+            Toast.makeText(getActivity(),"Die App ist auf dem neuesten Stand.",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Ein Update auf die Version " + newVersion + " ist vorhanden.\n\nJetzt herunterladen?")
@@ -119,6 +115,16 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
                     }
                 })
                 .setNegativeButton("Abbrechen",null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onFinishedFailure() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Fehlende Berechtigung!\nDie App muss auf das Dateisystem zugreifen können.\nÄndere dies in den Einstellungen um Updates zu erhalten.")
+                .setIcon(R.mipmap.ic_launcher)
+                .setPositiveButton("Ok",null)
                 .create()
                 .show();
     }
@@ -137,6 +143,10 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         MyAlarmManger am = new MyAlarmManger(getActivity());
         am.cancelAllAlarms();
         am.setNextAlarm();
+
+        UpdateAlarmManager um = new UpdateAlarmManager(getActivity());
+        um.cancelUpdateAlarm();
+        um.setUpdateAlarm();
     }
 
     private void setIntervallSummary(){
@@ -188,7 +198,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             setBooleanSummary(preference, "Ja", "Nein");
         }
         if (preference.getKey().equals("key_updates_check")){
-            UpdateManager um = new UpdateManager(this);
+            UpdateManager um = new UpdateManager(this,getActivity());
             um.checkForUpdate();
             progressDialog = new ProgressDialog(getActivity(),R.style.DialogTheme);
             progressDialog.setMessage("Es wird nach einem Update gesucht...");
@@ -201,4 +211,5 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     public void onBackStackChanged() {
         setIntervallSummary();
     }
+
 }

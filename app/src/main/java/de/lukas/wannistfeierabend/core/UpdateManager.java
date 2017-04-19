@@ -2,15 +2,15 @@ package de.lukas.wannistfeierabend.core;
 
 import android.Manifest;
 import android.app.DownloadManager;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
 
+import de.lukas.wannistfeierabend.BuildConfig;
 import de.lukas.wannistfeierabend.fragments.settings.MainSettingsFragment;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -23,18 +23,16 @@ public class UpdateManager extends AsyncTask<String, Void, Boolean> {
 
     final String versionURL = "https://www.dropbox.com/s/vmpwripb1pgwllg/version.txt?dl=1";
     final String appURL = "https://www.dropbox.com/s/evlig9jo46u6vjr/Wann%20ist%20Feierabend.apk?dl=1";
-    MainSettingsFragment settingsFragment;
+    DownloadListener downloadListener;
     String fetchedVersion;
     String thisVersion;
+    Context context;
 
 
-    public UpdateManager(MainSettingsFragment sf){
-        this.settingsFragment = sf;
-        try {
-            thisVersion = sf.getActivity().getPackageManager().getPackageInfo("de.lukas.wannistfeierabend",0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+    public UpdateManager(DownloadListener downloadListener, Context context){
+        this.context = context;
+        this.downloadListener = downloadListener;
+        thisVersion = BuildConfig.VERSION_NAME;
     }
 
     public void getUpdate(String newVersion) {
@@ -54,9 +52,9 @@ public class UpdateManager extends AsyncTask<String, Void, Boolean> {
         Log.d("this version", thisVersion);
         if (fetchedVersion.equals(thisVersion)) {
             Log.d("update", "no update");
-            settingsFragment.noUpdate();
+            downloadListener.onFinishedSuccess("");
         } else {
-            settingsFragment.updateFound(fetchedVersion);
+            downloadListener.onFinishedSuccess(fetchedVersion);
         }
     }
 
@@ -70,13 +68,13 @@ public class UpdateManager extends AsyncTask<String, Void, Boolean> {
         // (Seems to be available since Honeycomb only)
         r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-        if (ContextCompat.checkSelfPermission(settingsFragment.getActivity(),
+        if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             return false;
         }
         // Start download
-        DownloadManager dm = (DownloadManager) settingsFragment.getActivity().getSystemService(DOWNLOAD_SERVICE);
+        DownloadManager dm = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
         dm.enqueue(r);
         return true;
     }
@@ -85,7 +83,7 @@ public class UpdateManager extends AsyncTask<String, Void, Boolean> {
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
         if (!aBoolean){
-            settingsFragment.showNoPermissionDialog();
+            downloadListener.onFinishedFailure();
         }
     }
 

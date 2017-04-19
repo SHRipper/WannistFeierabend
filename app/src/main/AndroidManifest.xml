@@ -28,6 +28,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <receiver android:name=".receiver.AlarmReceiver"/>
+        <receiver android:name=".receiver.UpdateAlarmReceiver"/>
         <receiver android:name=".receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="animator_duration">2000</integer>
-    <integer-array name="update_interval_entry_values">
-        <item>0</item>
-        <item>1</item>
-    </integer-array>
+
 </resources>
