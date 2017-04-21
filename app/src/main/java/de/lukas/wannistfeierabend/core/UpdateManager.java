@@ -35,6 +35,7 @@ public class UpdateManager extends AsyncTask<String, Void, Boolean> {
         thisVersion = BuildConfig.VERSION_NAME;
     }
 
+
     public void getUpdate(String newVersion) {
         this.execute(newVersion);
     }

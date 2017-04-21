@@ -16,6 +16,7 @@ import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.activities.MainActivity;
 import de.lukas.wannistfeierabend.core.DownloadListener;
 import de.lukas.wannistfeierabend.core.UpdateManager;
+import de.lukas.wannistfeierabend.fragments.settings.MainSettingsFragment;
 
 /**
  * Created by Lukas on 16.04.2017.
@@ -33,26 +34,29 @@ public class UpdateAlarmReceiver extends BroadcastReceiver implements DownloadLi
     @Override
     public void onFinishedSuccess(String newVersion) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, buildNotification(context));
-    //todo: update notification bauen
+        notificationManager.notify(110, buildNotification(context));
     }
 
     @Override
     public void onFinishedFailure() {
-
+        // do nothing
     }
 
     private Notification buildNotification(Context context){
-        Intent intent = new Intent(context, MainActivity.class);
+        int id = 110;
+        Intent intent = new Intent(context, DownloadUpdateReceiver.class);
+        intent.putExtra("id", id);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+
         builder.setContentTitle("Feierabend?");
-        builder.setContentText("update!");
+        builder.setContentText("Ein neues Update ist vorhanden!");
         builder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
         builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
         builder.setContentIntent(pendingIntent);
+        builder.addAction(0, "Herunterladen",pendingIntent);
         builder.setDefaults(Notification.DEFAULT_ALL);
         builder.setAutoCancel(true);
         builder.setOnlyAlertOnce(true);

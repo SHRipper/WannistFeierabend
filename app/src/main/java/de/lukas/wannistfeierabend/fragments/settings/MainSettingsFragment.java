@@ -18,6 +18,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.Set;
+
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.core.DownloadListener;
 import de.lukas.wannistfeierabend.core.MyAlarmManger;
@@ -30,10 +32,9 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
     Context context;
     SharedPreferences sharedPreferences;
-    Preference notificationPreference, updatePreference;
+    Preference notificationPreference, updatePreference,autoUpdateIntervalPreference;
     ProgressDialog progressDialog;
     UpdateManager um;
-    MyAlarmManger am;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,8 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
         updatePreference = findPreference("key_updates_check");
         notificationPreference = findPreference("key_notifications_intervall");
+        Preference autoUpdatePreference = findPreference("key_auto_updates_enable");
+        autoUpdateIntervalPreference = findPreference("key_update_interval");
         Preference notificationEnable = findPreference("key_notifications_enable");
         Preference schedulePreference = findPreference("key_schedule");
         Preference showSaturdayPreference = findPreference("key_saturday_show");
@@ -53,11 +56,13 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         updatePreference.setOnPreferenceClickListener(this);
         schedulePreference.setOnPreferenceClickListener(this);
         showSaturdayPreference.setOnPreferenceClickListener(this);
+        autoUpdatePreference.setOnPreferenceClickListener(this);
 
         getFragmentManager().addOnBackStackChangedListener(this);
 
         setBooleanSummary(notificationEnable,"An", "Aus");
         setBooleanSummary(showSaturdayPreference, "Ja", "Nein");
+        setBooleanSummary(autoUpdatePreference, "aktiviert","deaktiviert");
 
         setIntervallSummary();
 
@@ -144,9 +149,9 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         am.cancelAllAlarms();
         am.setNextAlarm();
 
-        UpdateAlarmManager um = new UpdateAlarmManager(getActivity());
-        um.cancelUpdateAlarm();
-        um.setUpdateAlarm();
+        UpdateAlarmManager updateAlarmManager = new UpdateAlarmManager(getActivity());
+        updateAlarmManager.cancelUpdateAlarm();
+        updateAlarmManager.setUpdateAlarm();
     }
 
     private void setIntervallSummary(){
@@ -204,6 +209,9 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
             progressDialog.setMessage("Es wird nach einem Update gesucht...");
             progressDialog.show();
         }
+        if (preference.getKey().equals("key_auto_updates_enable")){
+            setBooleanSummary(preference, "aktiviert","deaktiviert");
+        }
         return true;
     }
 
@@ -211,5 +219,4 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     public void onBackStackChanged() {
         setIntervallSummary();
     }
-
 }

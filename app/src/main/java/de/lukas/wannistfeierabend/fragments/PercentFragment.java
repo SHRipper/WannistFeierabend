@@ -2,6 +2,7 @@ package de.lukas.wannistfeierabend.fragments;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,11 +25,13 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Random;
 import java.util.TimeZone;
 
 import de.lukas.wannistfeierabend.R;
@@ -153,7 +156,8 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
     public void onClick(View view) {
         Log.d("PercentFragment", "Share FAB clicked.");
 
-        String message = "Ich habe schon\n*" + progressDone + "%*\ndes Tages geschafft!";
+        String message = getShareMessage();
+        Log.d("PercentFragment","Shared message is " + message);
         if (sharedPreferences.getBoolean("key_downloadlink_show",false)){
             message += "\n\nJetzt die App herunterladen: "
                     + getResources().getString(R.string.dropbox_download_link);
@@ -163,8 +167,38 @@ public class PercentFragment extends Fragment implements FloatingActionButton.On
         sendIntent.setPackage("com.whatsapp");
         sendIntent.putExtra(Intent.EXTRA_TEXT, message);
         sendIntent.setType("text/plain");
-        startActivity(sendIntent);
+        try {
+            startActivity(sendIntent);
+        }catch(ActivityNotFoundException e ){
+            Toast.makeText(getActivity(),"Diese Funktion ist ohne Whatsapp nicht verfügbar.",Toast.LENGTH_SHORT).show();
+        }
 
+    }
+
+    private String getShareMessage(){
+        String messages[] = {
+                "Ich habe schon *{progress}%* des Tages geschafft!",
+                "Fast geschafft... schon {progress}% erledigt.",
+                "Daaaaaaaaaaaaaaaaaaaaaaaaaamn {progress}% geschafft!",
+        };
+
+        String finishedMessages[] ={
+                "Ich habe Feierabend! {progress}% erledigt.",
+                "{progress}% geschafft. Ab nach Hause!"
+        };
+        Random rnd = new Random();
+        String message = "";
+        if (progressDone == 100){
+            message = finishedMessages[rnd.nextInt(2)];
+            for (int i = 0; i< 100;i++){
+                Log.d("RndTest","2: " + rnd.nextInt(2));
+            }
+        }else{
+            message = messages[rnd.nextInt(3)];
+        }
+        String progress = "" + progressDone;
+
+        return message.replace("{progress}",progress);
     }
 
     private void resetProgress() {

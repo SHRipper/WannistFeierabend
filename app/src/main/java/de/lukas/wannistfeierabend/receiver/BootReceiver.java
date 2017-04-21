@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import de.lukas.wannistfeierabend.core.MyAlarmManger;
+import de.lukas.wannistfeierabend.core.UpdateAlarmManager;
 
 /**
  * Created by Tim on 08.05.2016.
@@ -16,5 +17,8 @@ public class BootReceiver extends BroadcastReceiver {
         Log.d("BootReciever", "boot completed");
         MyAlarmManger am = new MyAlarmManger(context);
         am.setNextAlarm();
+
+        UpdateAlarmManager um = new UpdateAlarmManager(context);
+        um.setUpdateAlarm();
     }
 }

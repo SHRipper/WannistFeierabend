@@ -31,15 +31,17 @@
 
     <PreferenceCategory android:title="Aktualisierung">
         <Preference android:title="Manuell auf Updates prüfen" android:key="key_updates_check"></Preference>
-        <SwitchPreference android:title="Automatische Updatesuche aktivieren"
+        <SwitchPreference android:title="Automatische Updatesuche"
             android:key="key_auto_updates_enable"
+            android:summary="deaktiviert"
             android:defaultValue="false"/>
-        <ListPreference android:title="Intervall" android:key="key_update_interval"
+        <ListPreference android:title="Intervall"
+            android:key="key_update_interval"
             android:entries="@array/update_interval_entries"
             android:entryValues="@array/update_interval_entry_values"
             android:dependency="key_auto_updates_enable"
-            android:defaultValue="0"
             android:summary="%s"
+            android:defaultValue="0"
             />
         <Preference android:title="Version" android:key="key_version"></Preference>
     </PreferenceCategory>
