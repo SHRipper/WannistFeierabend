@@ -33,9 +33,9 @@ public class TimeFragment extends Fragment {
         if (isVisibleToUser){
             Log.d("Handler","start onVisible");
             startHandler();
+            updateHeaders();
         }else{
             Log.d("Handler","stop onHide");
-
             stopHandler();
         }
     }
@@ -68,9 +68,7 @@ public class TimeFragment extends Fragment {
         txtRemainingHeader = (TextView) view.findViewById(R.id.txtRemainingHeader);
 
         updateHeaders();
-
         setTimer();
-
         return view;
     }
 
