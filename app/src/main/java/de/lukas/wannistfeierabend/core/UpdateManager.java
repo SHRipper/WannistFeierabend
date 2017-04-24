@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import de.lukas.wannistfeierabend.BuildConfig;
-import de.lukas.wannistfeierabend.fragments.settings.MainSettingsFragment;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
@@ -22,9 +21,8 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 public class UpdateManager extends AsyncTask<String, Void, Boolean> {
 
     final String versionURL = "https://www.dropbox.com/s/vmpwripb1pgwllg/version.txt?dl=1";
-    final String appURL = "https://www.dropbox.com/s/evlig9jo46u6vjr/Wann%20ist%20Feierabend.apk?dl=1";
+    static String appURL = "";
     DownloadListener downloadListener;
-    String fetchedVersion;
     String thisVersion;
     Context context;
 
@@ -44,13 +42,9 @@ public class UpdateManager extends AsyncTask<String, Void, Boolean> {
         new MyVersionChecker(this, versionURL);
     }
 
-    public void setFetchedVersion(String fetchedVersion) {
-        this.fetchedVersion = fetchedVersion;
-        compareVersions();
-    }
-
-    private void compareVersions() {
+    public void compareVersions(String fetchedVersion, String appURL) {
         Log.d("this version", thisVersion);
+        this.appURL = appURL;
         if (fetchedVersion.equals(thisVersion)) {
             Log.d("update", "no update");
             downloadListener.onFinishedSuccess("");

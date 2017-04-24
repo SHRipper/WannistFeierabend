@@ -18,8 +18,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Set;
-
 import de.lukas.wannistfeierabend.R;
 import de.lukas.wannistfeierabend.core.DownloadListener;
 import de.lukas.wannistfeierabend.core.MyAlarmManger;
@@ -34,7 +32,6 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
     SharedPreferences sharedPreferences;
     Preference notificationPreference, updatePreference,autoUpdateIntervalPreference;
     ProgressDialog progressDialog;
-    UpdateManager um;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +65,6 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
 
         getStorageWritePermission();
 
-        um = new UpdateManager(this,getActivity());
         try {
             PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo("de.lukas.wannistfeierabend", 0);
             findPreference("key_version").setSummary("version_" + packageInfo.versionName);
@@ -111,6 +107,7 @@ public class MainSettingsFragment extends PreferenceFragment implements Preferen
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final UpdateManager um = new UpdateManager(this, getActivity());
         builder.setMessage("Ein Update auf die Version " + newVersion + " ist vorhanden.\n\nJetzt herunterladen?")
                 .setIcon(R.mipmap.ic_launcher)
                 .setPositiveButton("Herunterladen", new DialogInterface.OnClickListener() {

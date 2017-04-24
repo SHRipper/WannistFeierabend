@@ -6,14 +6,13 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
  * Created by Lukas on 12.04.2017.
  */
 
-public class MyVersionChecker extends AsyncTask<String, Void, String> {
+public class MyVersionChecker extends AsyncTask<String, Void, String[]> {
     UpdateManager um;
 
     public MyVersionChecker(UpdateManager um, String url) {
@@ -23,7 +22,7 @@ public class MyVersionChecker extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... strings) {
+    protected String[] doInBackground(String... strings) {
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(strings[0]);
@@ -38,13 +37,18 @@ public class MyVersionChecker extends AsyncTask<String, Void, String> {
         return null;
     }
 
-    private String readStream(InputStream in) {
+    private String[] readStream(InputStream in) {
         char c;
-        String s = "";
+        String[] s = new String[2];
+        s[0] = "";
+        s[1] = "";
 
         try {
             while ((c = (char) in.read()) != ';') {
-                s += c;
+                s[0] += c;
+            }
+            while ((c = (char) in.read()) != ';') {
+                s[1] += c;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,8 +57,9 @@ public class MyVersionChecker extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String s) {
+    protected void onPostExecute(String[] s) {
         super.onPostExecute(s);
-        um.setFetchedVersion(s);
+        um.compareVersions(s[0], s[1]);
+
     }
 }
